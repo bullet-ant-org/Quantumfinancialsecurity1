@@ -1,0 +1,62 @@
+/* Reusing styles from ConnectWallet.css and CreateTicket.css for consistency */
+@import url('../auth/ConnectWallet.css');
+@import url('../auth/CreateTicket.css');
+
+.user-send-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  background: #1a1a1a;
+  animation: page-fade-in 0.5s ease-out;
+}
+
+.send-icon {
+  text-align: center;
+  font-size: 3rem;
+  color: #00e1ff;
+  margin-bottom: 1rem;
+}
+
+.send-form {
+  width: 100%;
+}
+
+.amount-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 15px;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.amount-input {
+  padding-left: 35px !important;
+  font-size: 1.5rem !important;
+  font-weight: 500;
+}
+
+/* For Webkit browsers like Chrome, Safari */
+.amount-input::-webkit-outer-spin-button,
+.amount-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+.amount-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.review-details p {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

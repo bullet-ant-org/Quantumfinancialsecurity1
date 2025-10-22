@@ -1,0 +1,118 @@
+.admin-notifications-page .dashboard-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: -1.5rem;
+  margin-bottom: 2rem;
+}
+
+.broadcast-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .broadcast-container {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.broadcast-form-card, .broadcast-preview-card {
+  background-color: rgba(45, 45, 45, 0.5);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.broadcast-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.broadcast-form-card .input-group textarea,
+.broadcast-form-card .input-group select {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.broadcast-form-card .input-group select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+.broadcast-form-card .input-group select option {
+  background: #2d2d2d;
+  color: #fff;
+}
+
+.broadcast-form-card .input-group textarea:focus,
+.broadcast-form-card .input-group select:focus {
+  border-color: #00e1ff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 225, 255, 0.25);
+  outline: 0;
+}
+
+.broadcast-form-card textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.broadcast-preview-card .preview-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+/* Re-using styles from Notifications.css for the preview */
+.broadcast-preview-card .notification-item.preview {
+  opacity: 1;
+  transform: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.broadcast-preview-card .notification-item.preview .notification-content {
+  flex-grow: 1;
+  padding-right: 0;
+}
+
+.admin-notifications-page textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.notification-feedback {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.notification-feedback.success {
+  background-color: rgba(40, 167, 69, 0.3);
+  color: #34c759;
+}
+
+.notification-feedback.error {
+  background-color: rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}

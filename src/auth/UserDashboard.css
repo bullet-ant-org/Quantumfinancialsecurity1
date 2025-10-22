@@ -1,0 +1,295 @@
+.user-dashboard {
+  padding: 0;
+
+  color: #fff;
+}
+
+.user-dashboard.animated {
+  animation: page-fade-in 0.5s ease-out;
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-title {
+  font-weight: 300;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+}
+
+.balance-display {
+  background: linear-gradient(135deg, rgba(0, 225, 255, 0.1), rgba(0, 0, 0, 0.2));
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
+}
+
+.balance-label {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.balance-amount {
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: #00e1ff;
+  letter-spacing: -1px;
+  text-shadow: 0 0 15px rgba(0, 225, 255, 0.3);
+}
+
+.dashboard-card {
+  background-color: rgba(30, 30, 30, 0.6);
+  background-color: rgba(45, 45, 45, 0.5);
+  border-radius: 15px;
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-title {
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 300px;
+  height: 300px; /* Taller charts for this page */
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gecko-widget-container {
+  height: 300px;
+  flex-grow: 1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.gecko-widget-container iframe {
+  border-radius: 10px;
+}
+
+.list-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.transaction-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transaction-list li {
+  padding: 0.8rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.transaction-list li:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.transaction-list li:last-child {
+  border-bottom: none;
+}
+
+.list-item-main,
+.list-item-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list-item-type {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.list-item-amount.credit { color: #28a745; font-weight: 600; }
+.list-item-amount.debit { color: #ff4b8d; font-weight: 600; }
+
+.list-item-sub {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.list-item-status {
+  text-transform: capitalize;
+}
+.status-completed { color: #28a745; }
+.status-pending { color: #ffc107; }
+.status-failed { color: #dc3545; }
+
+.news-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.news-list li {
+  padding: 0.8rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.news-list li:last-child {
+  border-bottom: none;
+}
+
+.news-list a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.news-list a:hover {
+  color: #00e1ff;
+}
+
+.news-source {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+.no-data-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 150px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.1rem;
+}
+
+.news-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.news-list li {
+  padding: 0.8rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.news-list li:last-child {
+  border-bottom: none;
+}
+
+.news-list a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.news-list a:hover {
+  color: #00e1ff;
+}
+
+.news-source {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+.settings-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.settings-btn:hover {
+  background: rgba(0, 225, 255, 0.2);
+  border-color: #00e1ff;
+}
+
+.no-wallet-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: rgba(45, 45, 45, 0.5);
+  border-radius: 15px;
+  margin-top: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.no-wallet-message .material-symbols-outlined {
+  font-size: 4rem;
+  color: #00e1ff;
+  margin-bottom: 1rem;
+}
+
+.no-wallet-message h2 {
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+
+.no-wallet-message p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2rem;
+  max-width: 400px;
+}
+
+.btn-primary-gradient {
+    /* Assuming you have a gradient button style, otherwise define it here */
+    background: linear-gradient(45deg, #00e1ff, #00a2ff);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+}
+}

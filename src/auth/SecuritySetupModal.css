@@ -1,0 +1,116 @@
+.security-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.security-modal-container {
+  background-color: #1a1a1a;
+  color: #fff;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0, 225, 255, 0.2);
+  border: 1px solid rgba(0, 225, 255, 0.3);
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.security-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 25px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 225, 255, 0.2);
+}
+
+.security-modal-header .material-symbols-outlined {
+  font-size: 2rem;
+  color: #00e1ff;
+}
+
+.security-modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.security-modal-content {
+  padding: 30px 25px;
+}
+
+.progress-bar-container-outer {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #00e1ff, #00a2ff);
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+  box-shadow: 0 0 10px #00e1ff;
+}
+
+.step-title {
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  animation: pulse 2s infinite;
+}
+
+.logs-container {
+  background-color: #0d0d0d;
+  border-radius: 8px;
+  padding: 15px;
+  height: 150px;
+  overflow-y: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.log-entry {
+  margin: 0 0 5px 0;
+  color: #00ff89;
+  white-space: pre-wrap;
+  animation: text-flicker 3s linear infinite, fadeIn 0.5s;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.6; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes text-flicker {
+  0% { opacity: 0.1; }
+  2% { opacity: 1; }
+  8% { opacity: 0.1; }
+  9% { opacity: 1; }
+  12% { opacity: 0.1; }
+  20% { opacity: 1; }
+  25% { opacity: 0.3; }
+  30% { opacity: 1; }
+  70% { opacity: 0.7; }
+  72% { opacity: 0.2; }
+  77% { opacity: 0.9; }
+  100% { opacity: 0.9; }
+}

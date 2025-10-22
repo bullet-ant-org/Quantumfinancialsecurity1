@@ -1,0 +1,104 @@
+.admin-dashboard .dashboard-title {
+  margin-bottom: 30px;
+  font-weight: 300;
+}
+
+.dashboard-card {
+  background-color: rgba(45, 45, 45, 0.5);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-card .card-title {
+  margin-bottom: 20px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 300px;
+  flex-grow: 1;
+}
+
+.list-container {
+  flex-grow: 1;
+}
+
+.transaction-list, .ticket-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transaction-list li, .ticket-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.transaction-list li:last-child, .ticket-list li:last-child {
+  border-bottom: none;
+}
+
+.transaction-list li:hover, .ticket-list li:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.list-item-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-item-user {
+  font-weight: 500;
+  color: #fff;
+}
+
+.list-item-amount {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.list-item-status {
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-completed {
+  background-color: rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+
+.status-pending {
+  background-color: rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+}
+
+.status-failed {
+  background-color: rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+
+.list-item-title {
+  color: #fff;
+}
+
+.list-item-category {
+  background-color: rgba(0, 225, 255, 0.2);
+  color: #00e1ff;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+}

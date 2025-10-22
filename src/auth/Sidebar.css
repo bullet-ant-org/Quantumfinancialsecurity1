@@ -1,0 +1,108 @@
+.sidebar-footer {
+    margin-top: auto;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.sidebar-logo {
+    height: 40px;
+    width: auto;
+}
+
+.user-avatar {
+    font-size: 2.2rem;
+    color: #00e1ff;
+    flex-shrink: 0;
+}
+
+.user-details {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.footer-username {
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.footer-email {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.logout-button {
+    background: none;
+    border: 1px solid rgba(255, 82, 82, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 8px 15px;
+    transition: color 0.2s ease;
+    width: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.logout-button:hover {
+    color: #dc3545;
+}
+
+.sidebar {
+    overflow-y: auto;
+}
+
+.mobile-close-button {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .mobile-close-button {
+        display: block; /* Shown on mobile */
+    }
+
+    .collapse-button {
+        display: none; /* Hidden on mobile */
+    }
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.nav-link .material-symbols-outlined {
+  font-size: 22px;
+  width: 24px; /* Ensure alignment */
+  text-align: center;
+}
+
+.logout-button .material-symbols-outlined {
+  font-size: 20px;
+}
