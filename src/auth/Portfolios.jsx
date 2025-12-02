@@ -83,12 +83,15 @@ const Portfolios = () => {
         const res = await fetch(`${apiUrl}/users`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
-        if (!res.ok) throw new Error('Failed to fetch users and their portfolios.');
         const data = await res.json();
+        if (!res.ok) {
+          // Use the error message from the backend if available
+          throw new Error(data.message || 'Failed to fetch users and their portfolios.');
+        }
         // The backend now returns users with their portfolios populated
         setUsers(data.users || []);
       } catch (err) {
-        setError('Failed to load portfolio data. Please try again.');
+        setError(err.message || 'Failed to load portfolio data. Please try again.');
       } finally {
         setLoading(false);
       }
