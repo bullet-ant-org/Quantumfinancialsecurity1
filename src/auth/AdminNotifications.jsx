@@ -64,7 +64,7 @@ const AdminNotifications = () => {
 
   return (
     <div className="admin-notifications-page">
-      <h1 className="dashboard-title">Send Notification</h1>
+      <h1 className="dashboard-title">Send Notification</h1><br />
       <p className="dashboard-subtitle">Send a message to all users or target a specific individual.</p>
 
       {feedback.text && <div className={`notification-feedback ${feedback.type}`}>{feedback.text}</div>}
