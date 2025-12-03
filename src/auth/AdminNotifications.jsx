@@ -15,6 +15,8 @@ const AdminNotifications = () => {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState('broadcast'); // 'broadcast' or 'specific'
+  const [recipient, setRecipient] = useState('');
   const [type, setType] = useState('info');
   const [feedback, setFeedback] = useState({ type: '', text: '' });
 
@@ -26,25 +28,32 @@ const AdminNotifications = () => {
     setLoading(true);
     setFeedback({ type: '', text: '' });
 
+    const isBroadcast = mode === 'broadcast';
+    const endpoint = isBroadcast ? 'broadcast' : 'send-to-user';
+    const body = isBroadcast
+      ? { title, message, type }
+      : { title, message, type, recipientIdentifier: recipient };
+
     try {
-      const res = await fetch(`${apiUrl}/notifications/broadcast`, {
+      const res = await fetch(`${apiUrl}/notifications/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, message, type }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to send notification.');
+        throw new Error(data.message || 'Failed to send notification');
       }
 
-      setFeedback({ type: 'success', text: 'Notification sent successfully to all users!' });
+      setFeedback({ type: 'success', text: data.message });
       setTitle('');
       setMessage('');
+      setRecipient('');
       setType('info');
     } catch (err) {
       setFeedback({ type: 'error', text: err.message });
@@ -55,14 +64,25 @@ const AdminNotifications = () => {
 
   return (
     <div className="admin-notifications-page">
-      <h1 className="dashboard-title">Broadcast Notification</h1>
-      <p className="dashboard-subtitle">Send a notification to all users in the system.</p>
+      <h1 className="dashboard-title">Send Notification</h1>
+      <p className="dashboard-subtitle">Send a message to all users or target a specific individual.</p>
 
       {feedback.text && <div className={`notification-feedback ${feedback.type}`}>{feedback.text}</div>}
 
       <div className="broadcast-container">
         <div className="broadcast-form-card">
+          <div className="admin-mode-switcher">
+            <button className={mode === 'broadcast' ? 'active' : ''} onClick={() => setMode('broadcast')}>Broadcast to All</button>
+            <button className={mode === 'specific' ? 'active' : ''} onClick={() => setMode('specific')}>Send to Specific User</button>
+          </div>
+
           <form onSubmit={handleSubmit}>
+            {mode === 'specific' && (
+              <div className="input-group">
+                <input type="text" id="recipient" value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder=" " required />
+                <label htmlFor="recipient">Recipient's Username or Email</label>
+              </div>
+            )}
             <div className="input-group">
               <input
                 type="text"
@@ -88,7 +108,7 @@ const AdminNotifications = () => {
               <label htmlFor="type">Notification Type</label>
             </div>
             <button type="submit" className="profile-button" disabled={loading}>
-              {loading ? 'Sending...' : 'Send to All Users'}
+              {loading ? 'Sending...' : (mode === 'broadcast' ? 'Send to All Users' : 'Send to User')}
             </button>
           </form>
         </div>

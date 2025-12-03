@@ -12,6 +12,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -29,6 +30,7 @@ const Auth = () => {
   }
 
   const register = async () => {
+    setIsLoading(true);
     console.log('Registering with:', { username, email, password, fullName: username });
     const response = await fetch(`${apiUrl}/auth/register`, {
       method: 'POST',
@@ -43,6 +45,7 @@ const Auth = () => {
     } else {
       setError(data.message || 'Signup failed.');
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -60,6 +63,7 @@ const Auth = () => {
   };
 
   const login = async () => {
+    setIsLoading(true);
     console.log('Logging in with:', { email, password });
     const response = await fetch(`${apiUrl}/auth/login`, {
       method: 'POST',
@@ -82,6 +86,7 @@ const Auth = () => {
     } else {
       setError(data.message || 'Login failed.');
     }
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -182,9 +187,9 @@ const Auth = () => {
               <button 
                 type="submit" 
                 className="auth-button"
-                onSubmit={handleSubmit}
+                disabled={isLoading}
               >
-                {isLogin ? 'Login' : 'Create Account'}
+                {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Create Account')}
               </button>
             </form>
             <div className="toggle-form">
