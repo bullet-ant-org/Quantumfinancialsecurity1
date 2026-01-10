@@ -58,16 +58,6 @@ const UserAssets = () => {
     }
 
     const fetchData = async () => {
-<<<<<<< HEAD
-      if (!localUser?.stellarAddress && !localUser?.rippleAddress) {
-        setLoading(false);
-        // No need to set an error, the UI will show the "Connect Wallet" prompt
-        return;
-      }
-
-
-=======
->>>>>>> 5be33f74f6ccdf46dc5c5fb6b025089462903237
       try {
         setLoading(true);
         const res = await fetch(`${apiUrl}/portfolio`, {
