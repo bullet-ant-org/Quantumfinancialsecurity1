@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Doughnut, Bar } from 'react-chartjs-2';
+import './UserDashboard.css';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -33,6 +34,8 @@ const UserDashboard = () => {
 
     const fetchData = async () => {
       try {
+        if (!localUser?.walletAddress) return setLoading(false);
+
         setLoading(true);
         const headers = { 'Authorization': `Bearer ${token}` };
 
@@ -68,7 +71,7 @@ const UserDashboard = () => {
     };
 
     fetchData();
-  }, [apiUrl, token]);
+  }, [apiUrl, token, user?.walletAddress]);
 
   useEffect(() => {
     if (portfolio && portfolio.assets && portfolio.assets.length > 0) {
@@ -131,13 +134,103 @@ const UserDashboard = () => {
   if (loading) return <div className="text-white text-center p-5">Loading Dashboard...</div>;
   if (error) return <div className="text-danger text-center p-5">{error}</div>;
 
+  // Check if user has connected wallet (verified status)
+  const isVerified = user?.stellarAddress || user?.rippleAddress;
+
   return (
     <div className="user-dashboard animated">
-      <div className="balance-display">
-        <p className="balance-label">Total Portfolio Value</p>
-        <h2 className="balance-amount">
-          ${(portfolio?.totalValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </h2>
+      {/* User Details Section */}
+      <div className="user-details-section">
+        <div className="user-info-grid">
+          <div className="user-info-item">
+            <span className="info-label">Username:</span>
+            <span className="info-value">{user?.username || 'N/A'}</span>
+          </div>
+          <div className="user-info-item">
+            <span className="info-label">Full Name:</span>
+            <span className="info-value">{user?.fullName || 'N/A'}</span>
+          </div>
+          <div className="user-info-item">
+            <span className="info-label">Account Status:</span>
+            <div className="status-indicator">
+              <span className="status-text">{isVerified ? 'Verified' : 'Unverified'}</span>
+              <div className={`status-circle ${isVerified ? 'verified' : 'unverified'}`}></div>
+            </div>
+          </div>
+          <div className="user-info-item">
+            <span className="info-label">Sign-up Date:</span>
+            <span className="info-value">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Balances Section */}
+      <div className="balances-section">
+        <h3 className="section-title">Account Balances</h3>
+        <div className="balances-grid">
+          <div className="balance-card">
+            <div className="balance-icon">
+              <span className="material-symbols-outlined">currency_exchange</span>
+            </div>
+            <div className="balance-info">
+              <span className="balance-symbol">XRP</span>
+              <span className="balance-amount">
+                {portfolio?.assets?.find(asset => asset.symbol === 'XRP')?.quantity?.toFixed(4) || '0.0000'}
+              </span>
+            </div>
+          </div>
+          <div className="balance-card">
+            <div className="balance-icon">
+              <span className="material-symbols-outlined">stars</span>
+            </div>
+            <div className="balance-info">
+              <span className="balance-symbol">XLM</span>
+              <span className="balance-amount">
+                {portfolio?.assets?.find(asset => asset.symbol === 'XLM')?.quantity?.toFixed(4) || '0.0000'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Rates Section */}
+      <div className="rates-section">
+        <h3 className="section-title">Market Rates</h3>
+        <div className="rates-grid">
+          <div className="rate-card">
+            <div className="rate-header">
+              <div className="rate-pair">
+                <span className="material-symbols-outlined rate-icon">currency_exchange</span>
+                <span className="rate-names">XRP/USDT</span>
+              </div>
+            </div>
+            <div className="rate-value">
+              <span className="current-rate">$0.50</span>
+            </div>
+          </div>
+          <div className="rate-card">
+            <div className="rate-header">
+              <div className="rate-pair">
+                <span className="material-symbols-outlined rate-icon">stars</span>
+                <span className="rate-names">XLM/USDT</span>
+              </div>
+            </div>
+            <div className="rate-value">
+              <span className="current-rate">$0.10</span>
+            </div>
+          </div>
+          <div className="rate-card">
+            <div className="rate-header">
+              <div className="rate-pair">
+                <span className="material-symbols-outlined rate-icon">attach_money</span>
+                <span className="rate-names">USDT/USD</span>
+              </div>
+            </div>
+            <div className="rate-value">
+              <span className="current-rate">$1.00</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="row g-4 mt-4">
@@ -176,48 +269,37 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
-      <div className="row g-4 mt-4">
-        <div className="col-lg-7">
-          <div className="dashboard-card">
-            <h5 className="card-title"><span className="material-symbols-outlined">swap_vert</span> Recent Transactions</h5>
-            <div className="list-container">
-              <ul className="transaction-list">
-                {transactions.length > 0 ? transactions.map(tx => (
-                  <li key={tx._id}>
-                    <div className="list-item-main">
-                      <span className="list-item-type">{tx.type}</span>
-                      <span className={`list-item-amount ${tx.type === 'credit' ? 'credit' : 'debit'}`}>
-                        {tx.type === 'credit' ? '+' : '-'}${tx.amount.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="list-item-sub">
-                      <span className="list-item-date">{new Date(tx.createdAt).toLocaleDateString()}</span>
-                      <span className={`list-item-status status-${tx.status.toLowerCase()}`}>{tx.status}</span>
-                    </div>
-                  </li>
-                )) : (
-                  <div className="no-data-message">No recent transactions.</div>
-                )}
-              </ul>
+      {/* Transactions and Activity Section */}
+      <div className="activity-section">
+        <div className="activity-header">
+          <h4 className="activity-title">Recent Activity</h4>
+        </div>
+        <div className="activity-content">
+          <div className="activity-item">
+            <div className="activity-icon">
+              <span className="material-symbols-outlined">swap_vert</span>
+            </div>
+            <div className="activity-details">
+              <span className="activity-label">Recent Transactions</span>
+              <span className="activity-count">{transactions.length} transactions</span>
             </div>
           </div>
-        </div>
-        <div className="col-lg-5">
-          <div className="dashboard-card">
-            <h5 className="card-title"><span className="material-symbols-outlined">feed</span> Crypto News</h5>
-            <div className="list-container">
-              <ul className="news-list">
-                {news.length > 0 ? news.map(article => (
-                  <li key={article.id}>
-                    <a href={article.url} target="_blank" rel="noopener noreferrer">
-                      {article.title}
-                      <span className="news-source">{article.source} - {new Date(article.published_on * 1000).toLocaleDateString()}</span>
-                    </a>
-                  </li>
-                )) : (
-                  <div className="no-data-message">Could not load news.</div>
-                )}
-              </ul>
+          <div className="activity-item">
+            <div className="activity-icon">
+              <span className="material-symbols-outlined">confirmation_number</span>
+            </div>
+            <div className="activity-details">
+              <span className="activity-label">Open Tickets</span>
+              <span className="activity-count">0 tickets</span>
+            </div>
+          </div>
+          <div className="activity-item">
+            <div className="activity-icon">
+              <span className="material-symbols-outlined">feed</span>
+            </div>
+            <div className="activity-details">
+              <span className="activity-label">Latest News</span>
+              <span className="activity-count">{news.length} articles</span>
             </div>
           </div>
         </div>

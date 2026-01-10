@@ -1,1 +1,190 @@
 @import './CreateTicket.css';
+
+.connect-wallet-page {
+  color: #fff;
+  padding: 2rem 1rem;
+}
+
+.connect-wallet-container {
+  max-width: 800px;
+  margin: 0 auto;
+  animation: page-fade-in 0.5s ease-out;
+}
+
+.dashboard-title {
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+}
+
+.dashboard-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.alert {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: #f8d7da;
+  border: 1px solid rgba(220, 53, 69, 0.5);
+}
+
+.alert-success {
+  background-color: rgba(40, 167, 69, 0.2);
+  color: #d4edda;
+  border: 1px solid rgba(40, 167, 69, 0.5);
+}
+
+.wallet-card {
+  background-color: rgba(45, 45, 45, 0.5);
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wallet-card-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #00e1ff;
+}
+
+.wallet-card-description {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.phrase-form, .manual-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.phrase-form textarea {
+  margin-bottom: 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.security-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1.5rem;
+}
+
+.security-notice .material-symbols-outlined {
+  font-size: 1.2rem;
+  color: #00e1ff;
+}
+
+.btn-primary-gradient {
+  background: linear-gradient(45deg, #00e1ff, #00a2ff);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-gradient:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wallet-group {
+  margin-bottom: 1.5rem;
+}
+
+.wallet-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.wallet-group .form-control {
+  width: 100%;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.btn-secondary {
+  color: #00e1ff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.wallet-connected-info {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.wallet-connected-icon {
+  font-size: 4rem;
+  color: #00e1ff;
+  margin-bottom: 1rem;
+}
+
+.wallet-connected-info p {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.wallet-address {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  word-break: break-all;
+  max-width: 100%;
+}
+
+.mt-3 {
+  margin-top: 1.5rem;
+}
+
+.wallet-connected-info {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.wallet-connected-icon {
+  font-size: 4rem;
+  color: #00e1ff;
+  margin-bottom: 1rem;
+}
+
+.wallet-connected-info p {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.wallet-address {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  word-break: break-all;
+  max-width: 100%;
+}
+
+.mt-3 {
+  margin-top: 1.5rem;
+}

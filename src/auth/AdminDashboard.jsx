@@ -72,10 +72,10 @@ const AdminDashboard = () => {
           datasets: [{
             data: Object.values(cardStatusCounts),
             backgroundColor: [
-              'rgba(0, 225, 255, 0.8)', // Active
               'rgba(255, 255, 255, 0.2)', // None
-              'rgba(255, 183, 0, 0.8)',
-              'rgba(255, 0, 55, 0.8)',
+              'rgba(205, 127, 50, 0.8)',  // Bronze
+              'rgba(192, 192, 192, 0.8)', // Silver
+              'rgba(255, 215, 0, 0.8)',  // Gold
             ],
             borderColor: '#1a1a1a',
             borderWidth: 1,

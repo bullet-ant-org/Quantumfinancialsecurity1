@@ -167,6 +167,13 @@
   padding-bottom: 1rem;
 }
 
+.form-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-top: -1.5rem;
+  margin-bottom: 2rem;
+}
+
 .profile-button {
   width: 100%;
   padding: 14px;

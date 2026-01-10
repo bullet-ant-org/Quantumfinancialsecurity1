@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './UserProfile.css';
+import { Link, useNavigate } from 'react-router-dom';
+import "./UserProfile.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -108,6 +109,7 @@ const UserProfile = () => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [notification, setNotification] = useState({ type: '', message: '' });
 
+  const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   const showNotification = (type, message) => {
@@ -187,7 +189,7 @@ const UserProfile = () => {
 
   return (
     <div className="user-profile-page">
-      <h1 className="dashboard-title">My Profile</h1>
+
 
       {notification.message && (
         <div className={`profile-notification ${notification.type} animated`}>

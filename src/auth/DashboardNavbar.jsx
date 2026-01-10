@@ -36,27 +36,44 @@ const DashboardNavbar = ({ toggleSidebar }) => {
     navigate('/login');
   };
 
+  // Check if user has connected wallet (verified status)
+  const isVerified = user?.stellarAddress || user?.rippleAddress;
+
   return (
     <nav className="dashboard-navbar">
-        <button className="sidebar-toggle-btn" onClick={toggleSidebar}>&#9776;</button>
-      <div className="ms-auto d-flex align-items-center">
-        <span className="username me-3">Welcome, {user ? user.username : 'Guest'}</span>
-        <Link to={user?.role === 'admin' ? '/admin/notifications' : '/user/notifications'} className="notification-bell me-3">
+      <div className="navbar-left">
+        <button className="sidebar-toggle-btn" onClick={toggleSidebar}>
+          <span className="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      <div className="navbar-center">
+        <div className="account-status">
+          <span className="status-text">{isVerified ? 'Verified' : 'Unverified'}</span>
+          <div className={`status-circle ${isVerified ? 'verified' : 'unverified'}`}></div>
+        </div>
+      </div>
+
+      <div className="navbar-right">
+        <Link to={user?.role === 'admin' ? '/admin/notifications' : '/user/notifications'} className="notification-bell">
           <span className="material-symbols-outlined">notifications</span>
           {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
         </Link>
         <div className="dropdown user-dropdown-container">
           <button className="btn dropdown-toggle user-dropdown d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span className="material-symbols-outlined">account_circle</span>
-            <span className="material-symbols-outlined">
-              arrow_drop_down
-            </span>
+            <span className="material-symbols-outlined">person</span>
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
-            <li><Link className="dropdown-item" to={user?.role === 'admin' ? '/admin/profile' : '/user/profile'}>Profile</Link></li>
-            <li><Link className="dropdown-item" to={user?.role === 'admin' ? '/admin/portfolios' : '/user/transactions'}>Transactions</Link></li>
+            <li><Link className="dropdown-item" to={user?.role === 'admin' ? '/admin/profile' : '/user/profile'}>
+              <span className="material-symbols-outlined">settings</span> Profile
+            </Link></li>
+            <li><Link className="dropdown-item" to={user?.role === 'admin' ? '/admin/portfolios' : '/user/transactions'}>
+              <span className="material-symbols-outlined">receipt_long</span> Transactions
+            </Link></li>
             <li><hr className="dropdown-divider" /></li>
-            <li><button className="dropdown-item" onClick={handleLogout}>Logout</button></li>
+            <li><button className="dropdown-item" onClick={handleLogout}>
+              <span className="material-symbols-outlined">logout</span> Logout
+            </button></li>
           </ul>
         </div>
       </div>

@@ -45,9 +45,9 @@ const Footer = () => {
                     <h4>Company</h4>
                   </div>
                   <ul>
-                    <li><Link to="/#features">Features</Link></li>
-                    <li><Link to="/#faq">About</Link></li>
-                    <li><Link to="/#portfolio">Portfolio</Link></li>
+                    <li><a href="/#features">Features</a></li>
+                    <li><a href="/#faq">About</a></li>
+                    <li><a href="/#portfolio">Portfolio</a></li>
                     <li><Link to="/login">Login</Link></li>
                   </ul>
                 </div>
@@ -58,10 +58,10 @@ const Footer = () => {
                     <h4>Legal & Support</h4>
                   </div>
                   <ul>
-                    <li><Link to="#">Terms of Service</Link></li>
-                    <li><Link to="#">Privacy Policy</Link></li>
-                    <li><Link to="#">Support Center</Link></li>
-                    <li><Link to="#">FAQ</Link></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Support Center</a></li>
+                    <li><a href="#">FAQ</a></li>
                   </ul>
                 </div>
               </div>
@@ -71,8 +71,8 @@ const Footer = () => {
                     <h4>Contact Us</h4>
                   </div>
                   <div className="contact_info">
-                    <p><a href="#">support@qfs.com</a></p>
-                    <p><a href="#">1-800-123-4567</a></p>
+                    <p><a href="mailto:support@qfs.com">support@qfs.com</a></p>
+                    <p><a href="tel:1-800-123-4567">1-800-123-4567</a></p>
                     <p>123 Finance St, New York, NY</p>
                   </div>
                 </div>

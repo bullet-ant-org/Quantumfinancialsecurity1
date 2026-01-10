@@ -32,13 +32,25 @@ const UserAssets = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [chartData, setChartData] = useState(null);
+  const [user, setUser] = useState(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('token');
 
   useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem('user'));
+
+    if (localUser) {
+      setUser(localUser);
+    }
+
     const fetchData = async () => {
-      const user = JSON.parse(localStorage.getItem('user'));
+      if (!localUser?.stellarAddress && !localUser?.rippleAddress) {
+        setLoading(false);
+        // No need to set an error, the UI will show the "Connect Wallet" prompt
+        return;
+      }
+
 
       try {
         setLoading(true);
@@ -58,7 +70,7 @@ const UserAssets = () => {
     };
 
     fetchData();
-  }, [apiUrl, token]);
+  }, [apiUrl, token, user?.walletAddress]);
 
   useEffect(() => {
     if (portfolio && portfolio.assets && portfolio.assets.length > 0) {
@@ -149,11 +161,11 @@ const UserAssets = () => {
               portfolio.assets.map((asset, index) => (
                 <li key={asset.name} className="asset-item">
                   <div className="asset-info">
-                    <span className="asset-name">{asset.name} ({asset.symbol})</span>
-                    <span className="asset-quantity">{asset.quantity}</span>
+                    <span className="asset-name">{asset.name} ({asset.symbol.replace('_TRC20', '')})</span>
+                    <span className="asset-quantity">{parseFloat(asset.quantity).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}</span>
                   </div>
                   <div className="asset-value">
-                    ${asset.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${(asset.value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </li>
               ))

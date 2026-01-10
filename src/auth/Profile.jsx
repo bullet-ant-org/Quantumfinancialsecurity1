@@ -108,7 +108,7 @@ const Profile = () => {
 
   return (
     <div className="profile-page">
-      <h1 className="dashboard-title">My Profile</h1>
+
 
       {message.text && <div className={`alert-message ${message.type}`}>{message.text}</div>}
       
