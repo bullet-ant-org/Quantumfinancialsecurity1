@@ -27,10 +27,23 @@ const NoWalletConnected = () => (
   </div>
 );
 
+const AdminPlaceholder = () => (
+  <div className="no-wallet-message">
+    <span className="material-symbols-outlined">
+      admin_panel_settings
+    </span>
+    <h2>Admin View</h2>
+    <p>This is your personal asset dashboard. As an admin, you can view all user portfolios.</p>
+    <Link to="/portfolios" className="btn-primary-gradient">
+      View All Portfolios
+    </Link>
+  </div>
+);
 const UserAssets = () => {
-  const [portfolio, setPortfolio] = useState({ assets: [], totalValue: 0 });
+  const [portfolio, setPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [chartData, setChartData] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -45,6 +58,7 @@ const UserAssets = () => {
     }
 
     const fetchData = async () => {
+<<<<<<< HEAD
       if (!localUser?.stellarAddress && !localUser?.rippleAddress) {
         setLoading(false);
         // No need to set an error, the UI will show the "Connect Wallet" prompt
@@ -52,18 +66,29 @@ const UserAssets = () => {
       }
 
 
+=======
+>>>>>>> 5be33f74f6ccdf46dc5c5fb6b025089462903237
       try {
         setLoading(true);
         const res = await fetch(`${apiUrl}/portfolio`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
-        if (!res.ok) throw new Error('Failed to fetch portfolio data.');
         const portfolioData = await res.json();
-        setPortfolio(portfolioData);
+        if (!res.ok) {
+          // A 404 from our backend means no wallet is linked. Other errors are treated as errors.
+          if (res.status !== 404) throw new Error(portfolioData.message || 'Failed to fetch portfolio data.');
+          setIsWalletConnected(false);
+        } else {
+          // Handle admin user case
+          if (portfolioData.isAdmin) {
+            setPortfolio(null); // Admins don't have a personal portfolio on this page
+          } else {
+            setPortfolio(portfolioData.portfolio); // Extract the nested portfolio object for a regular user
+          }
+          setIsWalletConnected(true); // Wallet is considered "connected" if the user exists
+        }
       } catch (err) {
-        // Don't set an error, just means no wallet is connected.
-        // The UI will handle showing the prompt.
-        console.error(err.message);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -73,7 +98,7 @@ const UserAssets = () => {
   }, [apiUrl, token, user?.walletAddress]);
 
   useEffect(() => {
-    if (portfolio && portfolio.assets && portfolio.assets.length > 0) {
+    if (isWalletConnected && portfolio?.assets?.length > 0) {
       const labels = portfolio.assets.map(asset => asset.symbol);
       const data = portfolio.assets.map(asset => asset.value || 0);
       const backgroundColors = [
@@ -90,7 +115,7 @@ const UserAssets = () => {
         }]
       });
     }
-  }, [portfolio]);
+  }, [portfolio, isWalletConnected]);
 
   const doughnutOptions = {
     responsive: true,
@@ -122,10 +147,25 @@ const UserAssets = () => {
 
   if (loading) return <div className="text-white text-center p-5">Loading Portfolio...</div>;
   if (error) return <div className="text-danger text-center p-5">{error}</div>;
+  if (!isWalletConnected) return <NoWalletConnected />;
+
+  // If the user is an admin, they don't have a personal portfolio on this page.
+  // The `portfolio` state will be null in this case.
+  if (isWalletConnected && !portfolio) return <AdminPlaceholder />;
+
   return (
     <div className="user-assets-page">
-      <h1 className="dashboard-title">My Portfolio</h1>
+      <div className="d-flex align-items-center mb-4">
+        <h1 className="dashboard-title mb-0">My Portfolio</h1>
+        <div
+          className={`wallet-status-indicator ms-3 ${isWalletConnected ? 'connected' : 'disconnected'}`}
+          title={isWalletConnected ? 'Wallet Connected' : 'Wallet Not Connected'}
+        ></div>
+      </div>
 
+      {/* Main content is only shown if a wallet is connected */}
+      {isWalletConnected && (
+      <>
       <div className="row g-4">
         <div className="col-lg-5">
           <div className="dashboard-card">
@@ -133,7 +173,10 @@ const UserAssets = () => {
             <div className="chart-wrapper">
               {chartData ? (
                 <Doughnut data={chartData} options={doughnutOptions} />
-              ) : (
+              ) : portfolio?.assets?.length === 0 ? (
+                <div className="no-data-message">Portfolio Balance: $0.00<br/><small>Add coins to your wallet to see them here.</small></div>
+              )
+              : (
                 <div className="no-data-message">No assets to display.</div>
               )}
             </div>
@@ -145,7 +188,10 @@ const UserAssets = () => {
             <div className="chart-wrapper">
               {chartData ? (
                 <Bar data={chartData} options={barOptions} />
-              ) : (
+              ) : portfolio?.assets?.length === 0 ? (
+                <div className="no-data-message">Your asset values will be shown here.</div>
+              )
+              : (
                 <div className="no-data-message">No assets to display.</div>
               )}
             </div>
@@ -157,7 +203,7 @@ const UserAssets = () => {
         <h5 className="card-title">All Assets</h5>
         <div className="asset-list-container">
           <ul className="asset-list">
-            {portfolio?.assets && portfolio.assets.length > 0 ? (
+            {portfolio?.assets?.length > 0 ? (
               portfolio.assets.map((asset, index) => (
                 <li key={asset.name} className="asset-item">
                   <div className="asset-info">
@@ -170,20 +216,15 @@ const UserAssets = () => {
                 </li>
               ))
             ) : (
-              <div className="no-wallet-message">
-                <span className="material-symbols-outlined">
-                  account_balance_wallet
-                </span>
-                <h2>No Wallet Connected</h2>
-                <p>Please connect your wallet to view your assets.</p>
-                <Link to="/user/connect-wallet" className="btn-primary-gradient">
-                  Connect Wallet
-                </Link>
+              <div className="no-data-message text-center p-4">
+                <h4>Portfolio Balance: $0.00</h4>
+                <p className="mb-0">Once you add ETH or other assets to your connected wallet, they will appear here automatically.</p>
               </div>
             )}
           </ul>
         </div>
       </div>
+      </>)}
     </div>
   );
 };

@@ -11,23 +11,22 @@ const Sec2 = () => {
           
         </div>
         <div className="col-lg-6 ps-lg-5">
-          <h2 className="text-light">Put your money to good use</h2>
+          <h2 className="text-light">Secure, Seamless Banking on the Ethereum Blockchain</h2>
           <p className="text-light-emphasis">
-            Dive deep into making your money work for you while you relax and watch netflix.
-            Understand patterns, connect with people, and have fun playing games with people on this digital space.
+            Take full control of your digital assets with the unparalleled security of the Ethereum blockchain. Our platform provides a direct, transparent, and secure gateway to manage your finances without traditional intermediaries.
           </p>
           <ul className="list-unstyled text-light mt-4">
             <li className="mb-3 d-flex align-items-start">
               <span className="material-symbols-outlined me-3 text-yellow-2">check_circle</span>
-              <span>Real-time data visualization and Balance Updates.</span>
+              <span>Instantly track your portfolio with real-time balance updates directly from the Ethereum network.</span>
             </li>
             <li className="mb-3 d-flex align-items-start">
               <span className="material-symbols-outlined me-3 text-yellow-2">check_circle</span>
-              <span>Customizable Avatars for your P2P Fights.</span>
+              <span>Benefit from world-class security, where only you have access to your funds via your private wallet.</span>
             </li>
             <li className="mb-3 d-flex align-items-start">
               <span className="material-symbols-outlined me-3 text-yellow-2">check_circle</span>
-              <span>Seamless Deposits and withdrawals At any Time or Day.</span>
+              <span>Enjoy the freedom of the blockchain with 24/7 access to your funds, free from traditional banking hours.</span>
             </li>
           </ul>
           <a href="#" className="btn btn-outline-light rounded-pill mt-3 px-4">Learn More</a>

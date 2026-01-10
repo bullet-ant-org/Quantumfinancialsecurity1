@@ -47,7 +47,13 @@ const UserDashboard = () => {
 
         if (portfolioRes.ok) {
           const portfolioData = await portfolioRes.json();
-          setPortfolio(portfolioData);
+          // Correctly handle the new portfolio controller response structure
+          if (portfolioData.isAdmin) {
+            // Admin users don't have a personal portfolio on this dashboard.
+            setPortfolio(null);
+          } else {
+            setPortfolio(portfolioData.portfolio);
+          }
         } else {
           console.error('Failed to fetch portfolio data. Is a wallet connected?');
         }
