@@ -114,7 +114,7 @@ const Portfolios = () => {
   if (data.isAdmin) {
     return (
       <div className="portfolios-page">
-        <h1 className="dashboard-title">All User Portfolios</h1>
+
         <div className="filters-bar">
           <input
             type="text"
@@ -136,7 +136,7 @@ const Portfolios = () => {
   // Regular User View
   return (
     <div className="portfolios-page">
-      <h1 className="dashboard-title">My Portfolio</h1>
+
       {data.portfolio && <PortfolioDisplay portfolio={data.portfolio} />}
     </div>
   );

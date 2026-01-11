@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 
 const DashboardNavbar = ({ toggleSidebar }) => {
   const [user, setUser] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const navigate = useNavigate();
+  const { isDarkMode, toggleTheme } = useTheme();
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('token');
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -14,21 +19,41 @@ const DashboardNavbar = ({ toggleSidebar }) => {
       setUser(JSON.parse(storedUser));
     }
 
-    const fetchUnreadCount = async () => {
+    const fetchNotificationsData = async () => {
       if (token) {
         try {
-          const res = await fetch(`${apiUrl}/notifications/unread-count`, {
+          // Fetch unread count
+          const countRes = await fetch(`${apiUrl}/notifications/unread-count`, {
             headers: { 'Authorization': `Bearer ${token}` },
           });
-          const data = await res.json();
-          if (res.ok) setUnreadCount(data.count);
+          const countData = await countRes.json();
+          if (countRes.ok) setUnreadCount(countData.count);
+
+          // Fetch top 4 notifications
+          const notifRes = await fetch(`${apiUrl}/notifications?limit=4`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          });
+          const notifData = await notifRes.json();
+          if (notifRes.ok) setNotifications(notifData.notifications || []);
         } catch (error) {
-          console.error('Failed to fetch unread count', error);
+          console.error('Failed to fetch notifications data', error);
         }
       }
     }
-    fetchUnreadCount();
+    fetchNotificationsData();
   }, [apiUrl, token]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowNotificationDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -55,10 +80,72 @@ const DashboardNavbar = ({ toggleSidebar }) => {
       </div>
 
       <div className="navbar-right">
-        <Link to={user?.role === 'admin' ? '/admin/notifications' : '/user/notifications'} className="notification-bell">
-          <span className="material-symbols-outlined">notifications</span>
-          {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
-        </Link>
+        <button className="theme-toggle-btn" onClick={toggleTheme} title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
+          <span className="material-symbols-outlined">
+            {isDarkMode ? 'light_mode' : 'dark_mode'}
+          </span>
+        </button>
+
+        {/* Notification Dropdown */}
+        <div className="notification-dropdown-container" ref={dropdownRef}>
+          <button
+            className="notification-bell"
+            onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
+            title="Notifications"
+          >
+            <span className="material-symbols-outlined">notifications</span>
+            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+          </button>
+
+          {showNotificationDropdown && (
+            <div className="notification-dropdown">
+              <div className="notification-header">
+                <h4>Notifications</h4>
+                <Link
+                  to={user?.role === 'admin' ? '/admin/notifications' : '/user/notifications'}
+                  className="view-all-link"
+                  onClick={() => setShowNotificationDropdown(false)}
+                >
+                  View All
+                </Link>
+              </div>
+
+              <div className="notification-list">
+                {notifications.length > 0 ? (
+                  notifications.map((notification) => (
+                    <div
+                      key={notification._id}
+                      className={`notification-item ${!notification.read ? 'unread' : ''}`}
+                    >
+                      <div className="notification-icon">
+                        <span className="material-symbols-outlined">
+                          {notification.type === 'transaction' && 'receipt_long'}
+                          {notification.type === 'security' && 'security'}
+                          {notification.type === 'system' && 'info'}
+                          {notification.type === 'dispute' && 'gavel'}
+                          {!notification.type && 'notifications'}
+                        </span>
+                      </div>
+                      <div className="notification-content">
+                        <div className="notification-title">{notification.title}</div>
+                        <div className="notification-message">{notification.message}</div>
+                        <div className="notification-time">
+                          {new Date(notification.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      {!notification.read && <div className="unread-indicator"></div>}
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-notifications">
+                    <span className="material-symbols-outlined">notifications_off</span>
+                    <p>No notifications yet</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
         <div className="dropdown user-dropdown-container">
           <button className="btn dropdown-toggle user-dropdown d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span className="material-symbols-outlined">person</span>

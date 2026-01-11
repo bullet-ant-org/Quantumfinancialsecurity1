@@ -11,32 +11,61 @@ import {
   Legend,
 } from 'chart.js';
 import './UserAssets.css';
+import XRPLogo from '../assets/xrplogo.png';
+import XLMLogo from '../assets/xlmlogo.png';
+import USDTLogo from '../assets/usdtlogo.png';
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const NoWalletConnected = () => (
-  <div className="no-wallet-message">
-    <span className="material-symbols-outlined">
-      account_balance_wallet
-    </span>
-    <h2>No Wallet Connected</h2>
-    <p>Please connect your wallet to view your assets.</p>
-    <Link to="/user/connect-wallet" className="btn-primary-gradient">
+  <div className="assets-empty-state">
+    <div className="empty-state-icon">
+      <span className="material-symbols-outlined">account_balance_wallet</span>
+    </div>
+    <h2 className="empty-state-title">No Wallet Connected</h2>
+    <p className="empty-state-subtitle">Connect your Stellar and Ripple wallets to view your crypto assets</p>
+    <Link to="/user/connect-wallet" className="connect-wallet-btn">
+      <span className="material-symbols-outlined">link</span>
       Connect Wallet
     </Link>
   </div>
 );
 
 const AdminPlaceholder = () => (
-  <div className="no-wallet-message">
-    <span className="material-symbols-outlined">
-      admin_panel_settings
-    </span>
-    <h2>Admin View</h2>
-    <p>This is your personal asset dashboard. As an admin, you can view all user portfolios.</p>
-    <Link to="/portfolios" className="btn-primary-gradient">
+  <div className="assets-empty-state">
+    <div className="empty-state-icon">
+      <span className="material-symbols-outlined">admin_panel_settings</span>
+    </div>
+    <h2 className="empty-state-title">Admin Dashboard</h2>
+    <p className="empty-state-subtitle">Access administrative controls and manage user portfolios</p>
+    <Link to="/portfolios" className="connect-wallet-btn">
+      <span className="material-symbols-outlined">group</span>
       View All Portfolios
     </Link>
+  </div>
+);
+
+const AssetCard = ({ asset, logo }) => (
+  <div className="asset-card">
+    <div className="asset-header">
+      <div className="asset-logo">
+        <img src={logo} alt={asset.symbol} />
+      </div>
+      <div className="asset-info">
+        <h3 className="asset-name">{asset.name}</h3>
+        <span className="asset-symbol">{asset.symbol}</span>
+      </div>
+    </div>
+    <div className="asset-details">
+      <div className="asset-quantity">
+        <span className="quantity-label">Balance</span>
+        <span className="quantity-value">{parseFloat(asset.quantity).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}</span>
+      </div>
+      <div className="asset-value">
+        <span className="value-label">Value</span>
+        <span className="value-amount">${(asset.value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+      </div>
+    </div>
   </div>
 );
 const UserAssets = () => {
@@ -135,86 +164,136 @@ const UserAssets = () => {
     },
   };
 
-  if (loading) return <div className="text-white text-center p-5">Loading Portfolio...</div>;
-  if (error) return <div className="text-danger text-center p-5">{error}</div>;
-  if (!isWalletConnected) return <NoWalletConnected />;
+  // Get logo for asset
+  const getAssetLogo = (symbol) => {
+    switch (symbol) {
+      case 'XRP': return XRPLogo;
+      case 'XLM': return XLMLogo;
+      case 'USDT': return USDTLogo;
+      default: return XRPLogo; // fallback
+    }
+  };
 
-  // If the user is an admin, they don't have a personal portfolio on this page.
-  // The `portfolio` state will be null in this case.
+  if (loading) {
+    return (
+      <div className="user-assets-page">
+        <div className="assets-loading">
+          <div className="loading-spinner-large"></div>
+          <h3>Loading Your Portfolio...</h3>
+          <p>Fetching your crypto assets</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="user-assets-page">
+        <div className="assets-error">
+          <span className="material-symbols-outlined">error</span>
+          <h3>Failed to Load Portfolio</h3>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()} className="retry-btn">
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isWalletConnected) return <NoWalletConnected />;
   if (isWalletConnected && !portfolio) return <AdminPlaceholder />;
+
+  const totalValue = portfolio?.assets?.reduce((sum, asset) => sum + (asset.value || 0), 0) || 0;
 
   return (
     <div className="user-assets-page">
-      <div className="d-flex align-items-center mb-4">
-        <h1 className="dashboard-title mb-0">My Portfolio</h1>
-        <div
-          className={`wallet-status-indicator ms-3 ${isWalletConnected ? 'connected' : 'disconnected'}`}
-          title={isWalletConnected ? 'Wallet Connected' : 'Wallet Not Connected'}
-        ></div>
-      </div>
-
-      {/* Main content is only shown if a wallet is connected */}
-      {isWalletConnected && (
-      <>
-      <div className="row g-4">
-        <div className="col-lg-5">
-          <div className="dashboard-card">
-            <h5 className="card-title">Asset Allocation</h5>
-            <div className="chart-wrapper">
-              {chartData ? (
-                <Doughnut data={chartData} options={doughnutOptions} />
-              ) : portfolio?.assets?.length === 0 ? (
-                <div className="no-data-message">Portfolio Balance: $0.00<br/><small>Add coins to your wallet to see them here.</small></div>
-              )
-              : (
-                <div className="no-data-message">No assets to display.</div>
-              )}
+      {/* Portfolio Overview Header */}
+      <div className="portfolio-header">
+        <div className="portfolio-summary">
+          <h1 className="portfolio-title">My Portfolio</h1>
+          <div className="portfolio-stats">
+            <div className="stat-item">
+              <span className="stat-label">Total Value</span>
+              <span className="stat-value">${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Assets</span>
+              <span className="stat-value">{portfolio?.assets?.length || 0}</span>
             </div>
           </div>
         </div>
-        <div className="col-lg-7">
-          <div className="dashboard-card">
-            <h5 className="card-title">Asset Values</h5>
-            <div className="chart-wrapper">
-              {chartData ? (
-                <Bar data={chartData} options={barOptions} />
-              ) : portfolio?.assets?.length === 0 ? (
-                <div className="no-data-message">Your asset values will be shown here.</div>
-              )
-              : (
-                <div className="no-data-message">No assets to display.</div>
-              )}
-            </div>
+        <div className="wallet-status">
+          <div className="status-indicator connected">
+            <span className="material-symbols-outlined">check_circle</span>
+            <span>Wallet Connected</span>
           </div>
         </div>
       </div>
 
-      <div className="dashboard-card mt-4">
-        <h5 className="card-title">All Assets</h5>
-        <div className="asset-list-container">
-          <ul className="asset-list">
-            {portfolio?.assets?.length > 0 ? (
-              portfolio.assets.map((asset, index) => (
-                <li key={asset.name} className="asset-item">
-                  <div className="asset-info">
-                    <span className="asset-name">{asset.name} ({asset.symbol.replace('_TRC20', '')})</span>
-                    <span className="asset-quantity">{parseFloat(asset.quantity).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}</span>
-                  </div>
-                  <div className="asset-value">
-                    ${(asset.value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </div>
-                </li>
-              ))
-            ) : (
-              <div className="no-data-message text-center p-4">
-                <h4>Portfolio Balance: $0.00</h4>
-                <p className="mb-0">Once you add ETH or other assets to your connected wallet, they will appear here automatically.</p>
-              </div>
-            )}
-          </ul>
+      {/* Main Content Grid */}
+      <div className="assets-grid">
+        {/* Chart Section */}
+        <div className="chart-section">
+          <div className="assets-card">
+            <div className="card-header">
+              <h3 className="card-title">Asset Distribution</h3>
+            </div>
+            <div className="chart-container">
+              {chartData && portfolio?.assets?.length > 0 ? (
+                <Doughnut data={chartData} options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
+                      labels: {
+                        color: 'var(--text-primary)',
+                        padding: 15,
+                        font: { size: 12 }
+                      }
+                    }
+                  },
+                  cutout: '70%',
+                }} />
+              ) : (
+                <div className="chart-placeholder">
+                  <span className="material-symbols-outlined">pie_chart</span>
+                  <p>No assets to display</p>
+                  <small>Add crypto to your wallet to see the distribution</small>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Assets List Section */}
+        <div className="assets-list-section">
+          <div className="assets-card">
+            <div className="card-header">
+              <h3 className="card-title">Your Assets</h3>
+            </div>
+            <div className="assets-list">
+              {portfolio?.assets?.length > 0 ? (
+                portfolio.assets.map((asset) => (
+                  <AssetCard
+                    key={asset.symbol}
+                    asset={asset}
+                    logo={getAssetLogo(asset.symbol)}
+                  />
+                ))
+              ) : (
+                <div className="empty-assets">
+                  <span className="material-symbols-outlined">account_balance_wallet</span>
+                  <h4>No Assets Found</h4>
+                  <p>Your connected wallets don't contain any supported cryptocurrencies yet.</p>
+                  <small>Supported: XRP, XLM, USDT</small>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      </>)}
     </div>
   );
 };

@@ -9,7 +9,7 @@ import Faq from '../components/Faq';
 
 const Landing = () => {
   return (
-    <>
+    <div className="landing-page">
       
       <Hero />
       {/* Placeholder for other sections */}
@@ -17,7 +17,7 @@ const Landing = () => {
       <Sec2 />
       <Portfolio />
       <Faq />
-    </>
+    </div>
   );
 };
 

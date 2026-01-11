@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 import './Sidebar.css';
-import Logo from '../assets/qfswhite.png';
+import LogoDark from '../assets/qfswhite.png';
+import LogoLight from '../assets/qfs.png';
 
 const Sidebar = ({ isOpen, userType, toggleSidebar }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -26,30 +29,30 @@ const Sidebar = ({ isOpen, userType, toggleSidebar }) => {
     navigate('/login');
   };
   const adminLinks = [
-    { path: '/admin/dashboard', name: 'Overview', icon: 'dashboard' },
-    { path: '/admin/users', name: 'User Management', icon: 'group' },
-    { path: '/admin/portfolios', name: 'Portfolios', icon: 'work' },
-    { path: '/admin/secretphrases', name: 'Secret Phrases', icon: 'key' },
-    { path: '/admin/tickets', name: 'Support Tickets', icon: 'receipt_long' },
-    { path: '/admin/disputes', name: 'Disputes', icon: 'gavel' },
-    { path: '/admin/notifications', name: 'Notifications', icon: 'notifications' },
-    { path: '/admin/send-notification', name: 'Send Notification', icon: 'send' },
-    { path: '/admin/profile', name: 'Profile', icon: 'person' },
+    { path: '/admin/dashboard', name: 'Overview', icon: 'dashboard', description: 'System stats' },
+    { path: '/admin/users', name: 'User Management', icon: 'group', description: 'Manage users' },
+    { path: '/admin/portfolios', name: 'Portfolios', icon: 'work', description: 'View holdings' },
+    { path: '/admin/secretphrases', name: 'Secret Phrases', icon: 'key', description: 'User secrets' },
+    { path: '/admin/tickets', name: 'Support Tickets', icon: 'receipt_long', description: 'Help requests' },
+    { path: '/admin/disputes', name: 'Disputes', icon: 'gavel', description: 'Resolve issues' },
+    { path: '/admin/notifications', name: 'Notifications', icon: 'notifications', description: 'System alerts' },
+    { path: '/admin/send-notification', name: 'Send Notification', icon: 'send', description: 'Broadcast msg' },
+    { path: '/admin/profile', name: 'Profile', icon: 'person', description: 'Admin account' },
   ];
 
   const userLinks = [
-    { path: '/user/dashboard', name: 'Dashboard', icon: 'dashboard' },
-    { path: '/user/connect-wallet', name: 'Connect Wallet', icon: 'account_balance_wallet' },
-    { path: '/user/transactions', name: 'Transactions', icon: 'swap_vert' },
-    { path: '/user/assets', name: 'Assets', icon: 'pie_chart' },
-    { path: '/user/send', name: 'Send', icon: 'send' },
-    { path: '/user/request', name: 'Request', icon: 'call_received' },
-    { path: '/user/cards', name: 'Cards', icon: 'credit_card' },
-    { path: '/user/notifications', name: 'Notifications', icon: 'notifications' },
-    { path: '/user/profile', name: 'Profile', icon: 'person' },
-    { path: '/user/create-ticket', name: 'Create Ticket', icon: 'note_add' },
-    { path: '/user/create-dispute', name: 'File a Dispute', icon: 'report_problem' },
-    { path: '/user/disputes', name: 'My Disputes', icon: 'shield' },
+    { path: '/user/dashboard', name: 'Dashboard', icon: 'dashboard', description: 'Overview' },
+    { path: '/user/connect-wallet', name: 'Connect Wallet', icon: 'account_balance_wallet', description: 'Link wallet' },
+    { path: '/user/transactions', name: 'Transactions', icon: 'swap_vert', description: 'Transfer history' },
+    { path: '/user/assets', name: 'Assets', icon: 'pie_chart', description: 'Portfolio view' },
+    { path: '/user/send', name: 'Send', icon: 'send', description: 'Transfer funds' },
+    { path: '/user/request', name: 'Request', icon: 'call_received', description: 'Receive funds' },
+    { path: '/user/cards', name: 'Cards', icon: 'credit_card', description: 'Card services' },
+    { path: '/user/notifications', name: 'Notifications', icon: 'notifications', description: 'Alerts' },
+    { path: '/user/profile', name: 'Profile', icon: 'person', description: 'Account settings' },
+    { path: '/user/create-ticket', name: 'Create Ticket', icon: 'note_add', description: 'Get support' },
+    { path: '/user/create-dispute', name: 'File a Dispute', icon: 'report_problem', description: 'Report issue' },
+    { path: '/user/disputes', name: 'My Disputes', icon: 'shield', description: 'Track issues' },
   ];
 
   const links = userType === 'admin' ? adminLinks : userLinks;
@@ -60,7 +63,7 @@ const Sidebar = ({ isOpen, userType, toggleSidebar }) => {
         <span className="material-symbols-outlined">close</span>
       </button>
       <div className="sidebar-header">
-        <img src={Logo} alt="QFS Logo" className="sidebar-logo" />
+        <img src={isDarkMode ? LogoDark : LogoLight} alt="QFS Logo" className="sidebar-logo" />
 
       </div>
       <ul className="nav flex-column">
@@ -68,7 +71,10 @@ const Sidebar = ({ isOpen, userType, toggleSidebar }) => {
           <li className="nav-item" key={link.name}>
             <NavLink className="nav-link" to={link.path} title={link.name} onClick={handleLinkClick}>
               <span className="material-symbols-outlined">{link.icon}</span>
-              <span className="link-text">{link.name}</span>
+              <div className="link-content">
+                <span className="link-text">{link.name}</span>
+                <span className="link-description">{link.description}</span>
+              </div>
             </NavLink>
           </li>))}
       </ul>

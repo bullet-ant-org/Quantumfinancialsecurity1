@@ -95,12 +95,39 @@
   gap: 15px;
   font-weight: 500;
   font-size: 0.95rem;
+  padding: 12px 15px;
+  transition: all 0.2s ease;
 }
 
 .nav-link .material-symbols-outlined {
   font-size: 22px;
   width: 24px; /* Ensure alignment */
   text-align: center;
+  flex-shrink: 0;
+}
+
+.link-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0; /* Allow text to wrap */
+}
+
+.link-text {
+  font-weight: 500;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-description {
+  font-size: 0.7rem;
+  font-weight: 400;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .logout-button .material-symbols-outlined {

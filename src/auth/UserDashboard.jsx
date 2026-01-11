@@ -11,6 +11,10 @@ import {
   Legend,
 } from 'chart.js';
 import TradingViewWidget from '../components/TradingViewWidget';
+import useMarketData from '../hooks/useMarketData';
+import XRPLogo from '../assets/xrplogo.png';
+import XLMLogo from '../assets/xlmlogo.png';
+import USDTLogo from '../assets/usdtlogo.png';
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -22,6 +26,9 @@ const UserDashboard = () => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Use the market data hook
+  const { marketData, loading: marketLoading } = useMarketData();
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('token');
@@ -176,7 +183,7 @@ const UserDashboard = () => {
         <div className="balances-grid">
           <div className="balance-card">
             <div className="balance-icon">
-              <span className="material-symbols-outlined">currency_exchange</span>
+              <img src={XRPLogo} alt="XRP" className="crypto-logo" />
             </div>
             <div className="balance-info">
               <span className="balance-symbol">XRP</span>
@@ -187,7 +194,7 @@ const UserDashboard = () => {
           </div>
           <div className="balance-card">
             <div className="balance-icon">
-              <span className="material-symbols-outlined">stars</span>
+              <img src={XLMLogo} alt="XLM" className="crypto-logo" />
             </div>
             <div className="balance-info">
               <span className="balance-symbol">XLM</span>
@@ -206,64 +213,80 @@ const UserDashboard = () => {
           <div className="rate-card">
             <div className="rate-header">
               <div className="rate-pair">
-                <span className="material-symbols-outlined rate-icon">currency_exchange</span>
+                <img src={XRPLogo} alt="XRP" className="rate-icon crypto-logo-small" />
                 <span className="rate-names">XRP/USDT</span>
               </div>
             </div>
             <div className="rate-value">
-              <span className="current-rate">$0.50</span>
+              <span className={`rate-trend ${marketData.XRP.change24h >= 0 ? 'up' : marketData.XRP.change24h < 0 ? 'down' : 'neutral'}`}>
+                <span className="material-symbols-outlined">
+                  {marketData.XRP.change24h > 0 ? 'trending_up' : marketData.XRP.change24h < 0 ? 'trending_down' : 'trending_flat'}
+                </span>
+              </span>
+              <span className="current-rate">
+                {marketLoading ? '...' : `$${marketData.XRP.price.toFixed(4)}`}
+              </span>
+
+              <div className="rate-change">
+                <span className={`change-percent ${marketData.XRP.change24h >= 0 ? 'positive' : 'negative'}`}>
+                  {marketData.XRP.change24h >= 0 ? '+' : ''}{marketData.XRP.change24h.toFixed(2)}%
+                </span>
+              </div>
             </div>
           </div>
           <div className="rate-card">
             <div className="rate-header">
               <div className="rate-pair">
-                <span className="material-symbols-outlined rate-icon">stars</span>
+                <img src={XLMLogo} alt="XLM" className="rate-icon crypto-logo-small" />
                 <span className="rate-names">XLM/USDT</span>
               </div>
             </div>
             <div className="rate-value">
-              <span className="current-rate">$0.10</span>
+               <span className={`rate-trend ${marketData.XLM.change24h >= 0 ? 'up' : marketData.XLM.change24h < 0 ? 'down' : 'neutral'}`}>
+                <span className="material-symbols-outlined">
+                  {marketData.XLM.change24h > 0 ? 'trending_up' : marketData.XLM.change24h < 0 ? 'trending_down' : 'trending_flat'}
+                </span>
+              </span>
+              <span className="current-rate">
+
+                {marketLoading ? '...' : `$${marketData.XLM.price.toFixed(4)}`}
+              </span>
+
+              <div className="rate-change">
+                <span className={`change-percent ${marketData.XLM.change24h >= 0 ? 'positive' : 'negative'}`}>
+                  {marketData.XLM.change24h >= 0 ? '+' : ''}{marketData.XLM.change24h.toFixed(2)}%
+                </span>
+              </div>
             </div>
           </div>
           <div className="rate-card">
             <div className="rate-header">
               <div className="rate-pair">
-                <span className="material-symbols-outlined rate-icon">attach_money</span>
+                <img src={USDTLogo} alt="USDT" className="rate-icon crypto-logo-small" />
                 <span className="rate-names">USDT/USD</span>
               </div>
             </div>
             <div className="rate-value">
-              <span className="current-rate">$1.00</span>
+              <span className={`rate-trend ${marketData.USDT.change24h >= 0 ? 'up' : marketData.USDT.change24h < 0 ? 'down' : 'neutral'}`}>
+                <span className="material-symbols-outlined">
+                  {marketData.USDT.change24h > 0 ? 'trending_up' : marketData.USDT.change24h < 0 ? 'trending_down' : 'trending_flat'}
+                </span>
+              </span>
+              <span className="current-rate">
+                {marketLoading ? '...' : `$${marketData.USDT.price.toFixed(4)}`}
+              </span>
+
+              <div className="rate-change">
+                <span className={`change-percent ${marketData.USDT.change24h >= 0 ? 'positive' : 'negative'}`}>
+                  {marketData.USDT.change24h >= 0 ? '+' : ''}{marketData.USDT.change24h.toFixed(2)}%
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="row g-4 mt-4">
-        <div className="col-lg-4">
-          <div className="dashboard-card">
-            <h5 className="card-title"><span className="material-symbols-outlined">pie_chart</span> Asset Allocation</h5>
-            <div className="chart-wrapper">
-              {chartData ? (
-                <Doughnut data={chartData} options={doughnutOptions} />
-              ) : (
-                <div className="no-data-message">No assets to display.</div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-8">
-          <div className="dashboard-card">
-            <div className="chart-wrapper" style={{ height: '350px' }}>
-              {chartData ? (
-                <Bar data={chartData} options={barOptions} />
-              ) : (
-                <div className="no-data-message">No assets to display.</div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+    
 
       <div className="row g-4 mt-4">
         <div className="col-lg-12">

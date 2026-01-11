@@ -1,7 +1,53 @@
+/* CSS Variables for Themes */
+:root {
+  /* Dark Theme (Default) */
+  --bg-primary: rgb(11, 11, 11);
+  --bg-secondary: rgb(20, 20, 20);
+  --bg-tertiary: rgb(30, 30, 30);
+  --bg-card: rgba(45, 45, 45, 0.5);
+  --bg-card-hover: rgba(55, 55, 55, 0.5);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.2);
+  --accent-primary: #00e1ff;
+  --accent-secondary: #ff4b8d;
+  --success-color: #28a745;
+  --error-color: #dc3545;
+  --warning-color: #ffc107;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --gradient-primary: linear-gradient(135deg, #00e1ff, #ff4b8d);
+  --backdrop-blur: blur(10px);
+}
+
+[data-theme="light"] {
+  /* Light Theme */
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f3f4;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --text-primary: #212529;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-hover: rgba(0, 0, 0, 0.15);
+  --accent-primary: #007bff;
+  --accent-secondary: #6f42c1;
+  --success-color: #28a745;
+  --error-color: #dc3545;
+  --warning-color: #ffc107;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --gradient-primary: linear-gradient(135deg, #007bff, #6f42c1);
+  --backdrop-blur: blur(20px);
+}
+
 body {
     font-family: 'poppins', sans-serif;
-    background-color: rgb(11, 11, 11);
-    color: white;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* --- Custom Scrollbar Styles --- */
@@ -221,4 +267,7 @@ body {
 .deneb_cta .cta_wrapper .button_box .deneb_btn:hover,
 .deneb_cta .cta_wrapper .button_box .deneb_btn:focus {
     box-shadow: 2.5px 4.33px 15px 0px rgba(0, 0, 0, 0.15);
+}
+.landing-page {
+    background-color: rgb(11, 11, 11);
 }
