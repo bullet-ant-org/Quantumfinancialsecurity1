@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const PortfolioDisplay = ({ portfolio, user }) => {
   const { assets = [], totalValue = 0 } = portfolio;
 
-  const chartData = useMemo(() => ({
+  const chartData = {
     labels: assets.map(a => a.symbol),
     datasets: [
       {
@@ -24,7 +24,7 @@ const PortfolioDisplay = ({ portfolio, user }) => {
         borderWidth: 2,
       },
     ],
-  }), [assets]);
+  };
 
   const chartOptions = {
     responsive: true,
@@ -114,6 +114,7 @@ const Portfolios = () => {
   if (data.isAdmin) {
     return (
       <div className="portfolios-page">
+        <h1 className="dashboard-title">Portfolios</h1>
 
         <div className="filters-bar">
           <input
@@ -136,6 +137,7 @@ const Portfolios = () => {
   // Regular User View
   return (
     <div className="portfolios-page">
+      <h1 className="dashboard-title">My Portfolio</h1>
 
       {data.portfolio && <PortfolioDisplay portfolio={data.portfolio} />}
     </div>

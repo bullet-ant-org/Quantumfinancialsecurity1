@@ -1,11 +1,9 @@
 .profile-container {
-  background-color: var(--bg-card);
-  border-radius: 15px;
-  box-shadow: 0 10px 30px var(--shadow-color);
-  backdrop-filter: var(--backdrop-blur);
-  border: 1px solid var(--border-color);
+
+
+
   max-width: 1100px;
-  margin: 2rem auto;
+  margin: 0rem auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -54,6 +52,9 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+.colorchange {
+  color: var(--text-primary);
 }
 
 .avatar-upload-button:hover {
@@ -116,20 +117,20 @@
 
 .profile-tabs {
   display: flex;
-  background-color: var(--bg-tertiary);
+  background-color: rgb(171, 171, 171);
 }
 
 .tab-button {
   flex: 1;
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   padding: 15px 25px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
   position: relative;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,10 +139,12 @@
 
 .tab-button:hover {
   color: var(--text-primary);
+  background: rgba(0, 225, 255, 0.05);
 }
 
 .tab-button.active {
   color: var(--accent-primary);
+  background: rgba(0, 225, 255, 0.1);
 }
 
 .tab-button span {
@@ -205,6 +208,15 @@
   cursor: not-allowed;
 }
 
+/* Loading Message */
+.loading-message {
+  color: var(--text-primary);
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
 /* --- General & Responsive --- */
 .animated {
   animation: fadeIn 0.5s ease-in-out;
@@ -224,15 +236,15 @@
 }
 
 .profile-notification.success {
-  background-color: rgba(40, 167, 69, 0.3);
-  color: #28a745;
-  border: 1px solid #28a745;
+  background-color: rgba(72, 187, 120, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(72, 187, 120, 0.3);
 }
 
 .profile-notification.error {
-  background-color: rgba(220, 53, 69, 0.3);
-  color: #dc3545;
-  border: 1px solid #dc3545;
+  background-color: rgba(245, 101, 101, 0.1);
+  color: var(--error-color);
+  border: 1px solid rgba(245, 101, 101, 0.3);
 }
 
 /* Desktop Layout */

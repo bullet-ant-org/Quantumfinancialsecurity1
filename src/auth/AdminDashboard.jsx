@@ -70,33 +70,39 @@ const AdminDashboard = () => {
         const headers = { 'Authorization': `Bearer ${token}` };
         const apiUrl = import.meta.env.VITE_API_URL;
 
-        // Fetch pre-calculated stats from the backend
-        const statsRes = await fetch(`${apiUrl}/stats/admin-dashboard`, { headers });
-        if (!statsRes.ok) throw new Error('Failed to fetch dashboard stats');
-        const {
-          monthlyRegistrations,
-          cardStatusCounts,
-          recentTransactions,
-          recentTickets,
-          totalUsers,
-          totalTransactions,
-          totalRevenue,
-          activeTickets
-        } = await statsRes.json();
+        // Fetch data from direct endpoints
+        const [transactionsRes, portfolioRes, ticketsRes, usersRes] = await Promise.all([
+          fetch(`${apiUrl}/transactions/admin/all`, { headers }),
+          fetch(`${apiUrl}/portfolio/admin/total-value`, { headers }),
+          fetch(`${apiUrl}/tickets/admin/all`, { headers }),
+          fetch(`${apiUrl}/users/admin/stats`, { headers }).catch(() => ({ ok: false })) // Fallback if endpoint doesn't exist
+        ]);
+
+        // Parse responses
+        const transactionsData = transactionsRes.ok ? await transactionsRes.json() : { totalTransactions: 0, totalRevenue: 0 };
+        const portfolioData = portfolioRes.ok ? await portfolioRes.json() : { totalPortfolioValue: 0 };
+        const ticketsData = ticketsRes.ok ? await ticketsRes.json() : { tickets: [] };
+        const usersData = usersRes.ok ? await usersRes.json() : { totalUsers: 0, monthlyRegistrations: new Array(12).fill(0), cardStatusCounts: {} };
+
+        // Calculate active tickets
+        const activeTickets = ticketsData.tickets ? ticketsData.tickets.filter(ticket =>
+          ticket.status !== 'closed' && ticket.status !== 'resolved'
+        ).length : 0;
 
         // Set overview stats
         setStats({
-          totalUsers: totalUsers || 0,
-          totalTransactions: totalTransactions || 0,
-          totalRevenue: totalRevenue || 0,
+          totalUsers: usersData.totalUsers || 0,
+          totalTransactions: transactionsData.totalTransactions || 0,
+          totalRevenue: (transactionsData.totalRevenue || 0) + (portfolioData.totalPortfolioValue || 0), // Combine transaction revenue + portfolio value
           activeTickets: activeTickets || 0
         });
 
+        // Set chart data
         setUserRegistrationData(prev => ({
           ...prev,
           datasets: [{
             label: 'New Users',
-            data: monthlyRegistrations,
+            data: usersData.monthlyRegistrations || new Array(12).fill(0),
             backgroundColor: 'rgba(102, 126, 234, 0.8)',
             borderColor: 'rgba(102, 126, 234, 1)',
             borderWidth: 1,
@@ -106,9 +112,9 @@ const AdminDashboard = () => {
         }));
 
         setCardStatusData({
-          labels: Object.keys(cardStatusCounts),
+          labels: Object.keys(usersData.cardStatusCounts || {}),
           datasets: [{
-            data: Object.values(cardStatusCounts),
+            data: Object.values(usersData.cardStatusCounts || {}),
             backgroundColor: [
               'rgba(113, 128, 150, 0.8)', // None
               'rgba(205, 127, 50, 0.9)',  // Bronze
@@ -120,8 +126,10 @@ const AdminDashboard = () => {
             hoverBorderWidth: 3,
           }]
         });
-        setRecentTransactions(recentTransactions);
-        setRecentTickets(recentTickets);
+
+        // Set recent data (limit to 5)
+        setRecentTransactions(transactionsData.transactions ? transactionsData.transactions.slice(0, 5) : []);
+        setRecentTickets(ticketsData.tickets ? ticketsData.tickets.slice(0, 5) : []);
 
       } catch (err) {
         setError('Failed to fetch dashboard data. Please try again later.');
@@ -134,74 +142,49 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  const barChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: 'rgba(102, 126, 234, 0.5)',
-        borderWidth: 1,
-      }
-    },
-    scales: {
-      y: {
-        ticks: {
-          color: '#718096',
-          font: { size: 12 }
-        },
-        grid: {
-          color: 'rgba(113, 128, 150, 0.1)',
-          borderDash: [5, 5]
-        },
-        border: { display: false }
-      },
-      x: {
-        ticks: {
-          color: '#718096',
-          font: { size: 12 }
-        },
-        grid: {
-          display: false
-        },
-        border: { display: false }
-      },
-    },
-    elements: {
-      bar: {
-        borderRadius: 4,
-      }
-    }
-  };
+  // Fetch realtime stats every 30 seconds
+  useEffect(() => {
+    const fetchRealtimeStats = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}` };
+        const apiUrl = import.meta.env.VITE_API_URL;
 
-  const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: {
-          color: '#718096',
-          font: { size: 12 },
-          padding: 20,
-          usePointStyle: true,
+        const realtimeRes = await fetch(`${apiUrl}/stats/realtime`, { headers });
+        if (realtimeRes.ok) {
+          const {
+            totalTransactions,
+            totalRevenue,
+            activeTickets,
+            transactionGrowthPercent,
+            revenueGrowthPercent,
+            ticketChangePercent
+          } = await realtimeRes.json();
+
+          // Update only the realtime stats
+          setStats(prev => ({
+            ...prev,
+            totalTransactions: totalTransactions || prev.totalTransactions,
+            totalRevenue: totalRevenue || prev.totalRevenue,
+            activeTickets: activeTickets || prev.activeTickets,
+            transactionGrowthPercent: transactionGrowthPercent ?? prev.transactionGrowthPercent ?? 8.2,
+            revenueGrowthPercent: revenueGrowthPercent ?? prev.revenueGrowthPercent ?? 15.3,
+            ticketChangePercent: ticketChangePercent ?? prev.ticketChangePercent ?? -5.1
+          }));
         }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: 'rgba(102, 126, 234, 0.5)',
-        borderWidth: 1,
+      } catch (err) {
+        console.error('Failed to fetch realtime stats:', err);
       }
-    },
-    cutout: '70%',
-  };
+    };
+
+    // Fetch immediately and then every 30 seconds
+    fetchRealtimeStats();
+    const interval = setInterval(fetchRealtimeStats, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+
 
   if (loading) {
     return (
@@ -264,28 +247,26 @@ const AdminDashboard = () => {
           icon="receipt_long"
           title="Total Transactions"
           value={stats.totalTransactions.toLocaleString()}
-          change={8.2}
+          change={stats.transactionGrowthPercent ?? 8.2}
           color="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
         />
         <StatCard
           icon="attach_money"
           title="Total Revenue"
           value={`$${stats.totalRevenue.toLocaleString()}`}
-          change={15.3}
+          change={stats.revenueGrowthPercent ?? 15.3}
           color="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
         />
         <StatCard
           icon="support_agent"
           title="Active Tickets"
           value={stats.activeTickets.toString()}
-          change={-5.1}
+          change={stats.ticketChangePercent ?? -5.1}
           color="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
         />
       </div>
 
-      {/* Charts Section */}
      
-
       {/* Data Tables Section */}
       <div className="data-section">
         <div className="data-card">

@@ -163,10 +163,13 @@
   border: 1px solid var(--border-color);
   border-radius: 12px;
   box-shadow: 0 20px 40px var(--shadow-color);
-  backdrop-filter: var(--backdrop-blur);
-  z-index: 1050;
+  z-index: 9999;
   margin-top: 8px;
   overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: all 0.3s ease;
 }
 
 .notification-header {

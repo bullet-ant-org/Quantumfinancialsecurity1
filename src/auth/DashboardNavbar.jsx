@@ -14,10 +14,35 @@ const DashboardNavbar = ({ toggleSidebar }) => {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const fetchUserData = async () => {
+      if (token) {
+        try {
+          // Fetch fresh user data from backend
+          const userRes = await fetch(`${apiUrl}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          });
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            setUser(userData.user);
+            // Update localStorage with fresh data
+            localStorage.setItem('user', JSON.stringify(userData.user));
+          } else {
+            // Fallback to localStorage if API fails
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+              setUser(JSON.parse(storedUser));
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch user data', error);
+          // Fallback to localStorage
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
+        }
+      }
+    };
 
     const fetchNotificationsData = async () => {
       if (token) {
@@ -27,19 +52,28 @@ const DashboardNavbar = ({ toggleSidebar }) => {
             headers: { 'Authorization': `Bearer ${token}` },
           });
           const countData = await countRes.json();
-          if (countRes.ok) setUnreadCount(countData.count);
+          if (countRes.ok) {
+            setUnreadCount(countData.count || 0);
+          }
 
           // Fetch top 4 notifications
           const notifRes = await fetch(`${apiUrl}/notifications?limit=4`, {
             headers: { 'Authorization': `Bearer ${token}` },
           });
           const notifData = await notifRes.json();
-          if (notifRes.ok) setNotifications(notifData.notifications || []);
+          if (notifRes.ok) {
+            setNotifications(notifData.notifications || []);
+          }
         } catch (error) {
           console.error('Failed to fetch notifications data', error);
+          // Set default values on error
+          setUnreadCount(0);
+          setNotifications([]);
         }
       }
-    }
+    };
+
+    fetchUserData();
     fetchNotificationsData();
   }, [apiUrl, token]);
 

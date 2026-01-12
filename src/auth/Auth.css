@@ -164,7 +164,7 @@
   background: rgba(255, 255, 255, 0.8);
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
-  color: #2d3748;
+  color: gray !important;
   font-size: 1rem;
   font-weight: 500;
   transition: all 0.3s ease;
@@ -174,6 +174,7 @@
 
 .input-group input:focus {
   outline: none;
+  color: gray;
   border-color: #667eea;
   background: rgba(255, 255, 255, 0.95);
   box-shadow:
@@ -183,7 +184,7 @@
 }
 
 .input-group input::placeholder {
-  color: #a0aec0;
+  color: gray;
   font-weight: 400;
 }
 

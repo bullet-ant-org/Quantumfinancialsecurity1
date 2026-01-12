@@ -41,11 +41,10 @@ const UserDashboard = () => {
 
     const fetchData = async () => {
       try {
-        if (!localUser?.walletAddress) return setLoading(false);
-
         setLoading(true);
         const headers = { 'Authorization': `Bearer ${token}` };
 
+        // Always try to fetch portfolio data - the backend will handle wallet connection checks
         const [portfolioRes, transactionsRes, newsRes] = await Promise.all([
           fetch(`${apiUrl}/portfolio`, { headers }),
           fetch(`${apiUrl}/transactions`, { headers }),
@@ -62,7 +61,9 @@ const UserDashboard = () => {
             setPortfolio(portfolioData.portfolio);
           }
         } else {
-          console.error('Failed to fetch portfolio data. Is a wallet connected?');
+          const errorData = await portfolioRes.json().catch(() => ({}));
+          console.error('Failed to fetch portfolio data:', errorData?.message || 'Unknown error');
+          setPortfolio(null);
         }
 
         if (transactionsRes.ok) {
@@ -84,7 +85,7 @@ const UserDashboard = () => {
     };
 
     fetchData();
-  }, [apiUrl, token, user?.walletAddress]);
+  }, [apiUrl, token]);
 
   useEffect(() => {
     if (portfolio && portfolio.assets && portfolio.assets.length > 0) {
@@ -104,45 +105,7 @@ const UserDashboard = () => {
     }
   }, [portfolio]);
 
-  const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: {
-          color: 'white',
-          padding: 15,
-          font: { size: 12 }
-        }
-      }
-    },
-    cutout: '70%',
-  };
 
-  const barOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      title: {
-        display: true,
-        text: 'Asset Value Distribution',
-        color: 'white',
-        font: { size: 16 }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: 'white'
-        }
-      },
-      y: {
-        ticks: { color: 'white' }
-      }
-    }
-  };
 
   if (loading) return <div className="text-white text-center p-5">Loading Dashboard...</div>;
   if (error) return <div className="text-danger text-center p-5">{error}</div>;

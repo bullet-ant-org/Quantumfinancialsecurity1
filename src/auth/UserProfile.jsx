@@ -17,8 +17,8 @@ const ProfileSummaryCard = ({ user }) => (
     <h2 className="profile-username">{user.fullName || user.username}</h2>
     <p className="profile-email">{user.email}</p>
     <div className="profile-details">
-      <p><strong>Role:</strong> <span className="profile-role">{user.role}</span></p>
-      <p><strong>Joined:</strong> <span>{new Date(user.createdAt).toLocaleDateString()}</span></p>
+      <p><strong> <span className='colorchange'>Role:</span></strong> <span className="profile-role">{user.role}</span></p>
+      <p><strong><span className='colorchange'>Joined:</span></strong> <span>{new Date(user.createdAt).toLocaleDateString()}</span></p>
     </div>
   </div>
 );
@@ -185,7 +185,7 @@ const UserProfile = () => {
     }
   };
 
-  if (loading || !user) return <div className="text-white text-center p-5">Loading Profile...</div>;
+  if (loading || !user) return <div className="loading-message">Loading Profile...</div>;
 
   return (
     <div className="user-profile-page">
@@ -204,11 +204,11 @@ const UserProfile = () => {
           <div className="profile-tabs">
             <button className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
               <span className="material-symbols-outlined">person</span>
-              <span>Profile</span>
+              <span className='colorchange'>Profile</span>
             </button>
             <button className={`tab-button ${activeTab === 'password' ? 'active' : ''}`} onClick={() => setActiveTab('password')}>
               <span className="material-symbols-outlined">lock</span>
-              <span>Security</span>
+              <span className='colorchange'>Security</span>
             </button>
           </div>
 
