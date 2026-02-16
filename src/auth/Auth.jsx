@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 import './Auth.css';
 
 const Auth = () => {

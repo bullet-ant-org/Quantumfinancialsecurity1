@@ -103,16 +103,16 @@ const UserRequest = () => {
     setSuccess('');
 
     try {
-      const res = await fetch(`${apiUrl}/notifications/create-request`, {
+      const res = await fetch(`${apiUrl}/transactions/request-crypto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          recipientIdentifier: recipient,
           amount: parseFloat(amount),
-          crypto: selectedCrypto
+          senderIdentifier: recipient, // Renamed from recipientIdentifier to senderIdentifier
+          currency: selectedCrypto, // Renamed from crypto to currency
         }),
       });
 
@@ -122,10 +122,10 @@ const UserRequest = () => {
         throw new Error(data.message || 'Failed to send request.');
       }
 
-      setSuccess(`Request sent successfully to ${recipient} for ${amount} ${selectedCrypto}!`);
+      setSuccess(`Request for ${amount} ${selectedCrypto} sent successfully to ${recipient}!`);
       setStep(5);
-    } catch {
-      setError('Failed to send request. Please try again.');
+    } catch (err) {
+      setError(err.message || 'Failed to send request. Please try again.');
     } finally {
       setIsLoading(false);
     }

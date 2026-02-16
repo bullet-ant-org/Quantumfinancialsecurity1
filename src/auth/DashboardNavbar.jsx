@@ -7,27 +7,26 @@ const DashboardNavbar = ({ toggleSidebar }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('token');
-  const dropdownRef = useRef(null);
+  const notificationDropdownRef = useRef(null);
+  const userDropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (token) {
         try {
-          // Fetch fresh user data from backend
           const userRes = await fetch(`${apiUrl}/auth/me`, {
             headers: { 'Authorization': `Bearer ${token}` },
           });
           if (userRes.ok) {
             const userData = await userRes.json();
             setUser(userData.user);
-            // Update localStorage with fresh data
             localStorage.setItem('user', JSON.stringify(userData.user));
           } else {
-            // Fallback to localStorage if API fails
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
               setUser(JSON.parse(storedUser));
@@ -35,7 +34,6 @@ const DashboardNavbar = ({ toggleSidebar }) => {
           }
         } catch (error) {
           console.error('Failed to fetch user data', error);
-          // Fallback to localStorage
           const storedUser = localStorage.getItem('user');
           if (storedUser) {
             setUser(JSON.parse(storedUser));
@@ -47,7 +45,6 @@ const DashboardNavbar = ({ toggleSidebar }) => {
     const fetchNotificationsData = async () => {
       if (token) {
         try {
-          // Fetch unread count
           const countRes = await fetch(`${apiUrl}/notifications/unread-count`, {
             headers: { 'Authorization': `Bearer ${token}` },
           });
@@ -56,7 +53,6 @@ const DashboardNavbar = ({ toggleSidebar }) => {
             setUnreadCount(countData.count || 0);
           }
 
-          // Fetch top 4 notifications
           const notifRes = await fetch(`${apiUrl}/notifications?limit=4`, {
             headers: { 'Authorization': `Bearer ${token}` },
           });
@@ -66,7 +62,6 @@ const DashboardNavbar = ({ toggleSidebar }) => {
           }
         } catch (error) {
           console.error('Failed to fetch notifications data', error);
-          // Set default values on error
           setUnreadCount(0);
           setNotifications([]);
         }
@@ -77,11 +72,13 @@ const DashboardNavbar = ({ toggleSidebar }) => {
     fetchNotificationsData();
   }, [apiUrl, token]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
         setShowNotificationDropdown(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setShowUserDropdown(false);
       }
     };
 
@@ -95,7 +92,6 @@ const DashboardNavbar = ({ toggleSidebar }) => {
     navigate('/login');
   };
 
-  // Check if user has connected wallet (verified status)
   const isVerified = user?.stellarAddress || user?.rippleAddress;
 
   return (
@@ -120,8 +116,7 @@ const DashboardNavbar = ({ toggleSidebar }) => {
           </span>
         </button>
 
-        {/* Notification Dropdown */}
-        <div className="notification-dropdown-container" ref={dropdownRef}>
+        <div className="notification-dropdown-container" ref={notificationDropdownRef}>
           <button
             className="notification-bell"
             onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
@@ -180,22 +175,44 @@ const DashboardNavbar = ({ toggleSidebar }) => {
             </div>
           )}
         </div>
-        <div className="dropdown user-dropdown-container">
-          <button className="btn dropdown-toggle user-dropdown d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span className="material-symbols-outlined">person</span>
+
+        <div className="user-dropdown-container" ref={userDropdownRef}>
+          <button
+            className="user-dropdown-btn"
+            onClick={() => setShowUserDropdown(!showUserDropdown)}
+            title="Account menu"
+          >
+            <span className="material-symbols-outlined">account_circle</span>
           </button>
-          <ul className="dropdown-menu dropdown-menu-end">
-            <li><Link className="dropdown-item" to={user?.role === 'admin' ? '/admin/profile' : '/user/profile'}>
-              <span className="material-symbols-outlined">settings</span> Profile
-            </Link></li>
-            <li><Link className="dropdown-item" to={user?.role === 'admin' ? '/admin/portfolios' : '/user/transactions'}>
-              <span className="material-symbols-outlined">receipt_long</span> Transactions
-            </Link></li>
-            <li><hr className="dropdown-divider" /></li>
-            <li><button className="dropdown-item" onClick={handleLogout}>
-              <span className="material-symbols-outlined">logout</span> Logout
-            </button></li>
-          </ul>
+
+          {showUserDropdown && (
+            <div className="user-dropdown-menu">
+              <Link
+                to={user?.role === 'admin' ? '/admin/profile' : '/user/profile'}
+                className="dropdown-item"
+                onClick={() => setShowUserDropdown(false)}
+              >
+                Profile
+              </Link>
+              <Link
+                to={user?.role === 'admin' ? '/admin/portfolios' : '/user/transactions'}
+                className="dropdown-item"
+                onClick={() => setShowUserDropdown(false)}
+              >
+                Transactions
+              </Link>
+              <div className="dropdown-divider"></div>
+              <button
+                className="dropdown-item logout-item"
+                onClick={() => {
+                  handleLogout();
+                  setShowUserDropdown(false);
+                }}
+              >
+                Log Out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>

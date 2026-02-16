@@ -5,6 +5,7 @@ import XRPLogo from '../assets/xrplogo.png';
 import XLMLogo from '../assets/xlmlogo.png';
 import USDTLogo from '../assets/usdtlogo.png';
 
+
 const LoadingSpinner = () => (
   <div className="loading-overlay">
     <div className="loading-spinner-large"></div>
@@ -109,13 +110,33 @@ const UserSend = () => {
     setSuccess('');
 
     try {
-      // This would be the actual send transaction endpoint
-      // For now, we'll just simulate success
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSuccess(`Successfully sent ${amount} ${selectedCrypto} to ${recipient}!`);
+      const res = await fetch(`${apiUrl}/transactions/send-crypto`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amount: parseFloat(amount),
+          recipientIdentifier: recipient,
+          currency: selectedCrypto,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 400 && data.message === 'Insufficient balance') {
+          setError('Insufficient balance to complete this transaction.');
+          return;
+        }
+        throw new Error(data.message || 'Transaction failed.');
+      }
+
+      setSuccess(`Successfully sent ${amount} ${selectedCrypto} to ${recipient}! Transaction hash: ${data.transactionHash}`);
       setStep(5);
     } catch (err) {
-      setError('Transaction failed. Please try again.');
+      setError(err.message || 'Transaction failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
