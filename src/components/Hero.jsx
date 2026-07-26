@@ -2,136 +2,95 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
+import './Hero.css';
 
 const Hero = () => {
   const [init, setInit] = useState(false);
 
-  // this should be run only once per application lifetime
   useEffect(() => {
     initParticlesEngine(async (engine) => {
-      // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
-      // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-      // starting from v2 you can add only the features you need reducing the bundle size
       await loadSlim(engine);
     }).then(() => {
       setInit(true);
     });
   }, []);
 
-  const particlesLoaded = (container) => {
-    console.log("Particles container loaded", container);
-  };
-
   const particlesOptions = useMemo(() => ({
-    fullScreen: {
-      enable: false,
-    },
-    background: {
-      color: {
-        value: "black", // A dark, professional background
-      },
-    },
+    fullScreen: { enable: false },
+    background: { color: { value: "transparent" } },
     fpsLimit: 90,
     interactivity: {
-      events: {
-        onHover: {
-          enable: true,
-          mode: "repulse",
-        },
-        resize: true,
-      },
-      modes: {
-        repulse: {
-          distance: 100,
-          duration: 0.4,
-        },
-      },
+      events: { onHover: { enable: true, mode: "repulse" }, resize: true },
+      modes: { repulse: { distance: 100, duration: 0.4 } },
     },
     particles: {
-      color: {
-        value: "#ffffff",
-      },
-      links: {
-        color: "#ffffff",
-        distance: 150,
-        enable: true,
-        opacity: 0.2,
-        width: 1,
-      },
-      collisions: {
-        enable: false,
-      },
-      move: {
-        direction: "none",
-        enable: true,
-        outModes: {
-          default: "bounce",
-        },
-        random: false,
-        speed: 2,
-        straight: false,
-      },
-      number: {
-        density: {
-          enable: true,
-          area: 20,
-        },
-        value: 250,
-      },
-      opacity: {
-        value: 0.5,
-      },
-      shape: {
-        type: "circle",
-      },
-      size: {
-        value: { min: 1, max: 5 },
-      },
+      color: { value: "#00e1ff" },
+      links: { color: "#00e1ff", distance: 150, enable: true, opacity: 0.15, width: 1 },
+      collisions: { enable: false },
+      move: { direction: "none", enable: true, outModes: { default: "bounce" }, random: false, speed: 1.2, straight: false },
+      number: { density: { enable: true, area: 22 }, value: 160 },
+      opacity: { value: 0.4 },
+      shape: { type: "circle" },
+      size: { value: { min: 1, max: 3 } },
     },
     detectRetina: true,
   }), []);
 
-  if (!init) {
-    return null; // or a loading spinner
-  }
-
   return (
-    <div
-      className="hero-container mybg"
-      style={{
-        position: 'relative',
-        height: '80vh',
-        overflow: 'hidden',
-        color: 'white'
-      }}
-    >
-      {/*
-        This style block is the key fix. It targets the container div that
-        tsparticles creates (using the id="tsparticles") and forces it to
-        fill its parent.
-      */}
-      <style>
-        {`
-          #tsparticles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-          }
-        `}
-      </style>
-      <Particles id="tsparticles" particlesLoaded={particlesLoaded} options={particlesOptions} />
+    <section className="hero-section">
+      {init && (
+        <Particles id="tsparticles" options={particlesOptions} />
+      )}
+      <div className="hero-glow hero-glow--one" />
+      <div className="hero-glow hero-glow--two" />
 
-      {/* Hero Content */}
-      <div className="container h-100 d-flex flex-column justify-content-center align-items-center text-center" style={{ zIndex: 2, position: 'relative' }}>
-        <h1 className="display-3 fw-bold" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>Quantum Financial Security</h1>
-        <p className="lead my-4" style={{ maxWidth: '600px', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
-          QFS portal to backup digital assets and funds for the global event and blackout coming soon!
+      <div className="container hero-content">
+        <span className="hero-eyebrow">
+          <span className="hero-eyebrow__dot" />
+          Non-custodial · Multi-chain · Audited
+        </span>
+
+        <h1 className="hero-title">
+          Your assets, secured for
+          <span className="hero-title__gradient"> whatever comes next.</span>
+        </h1>
+
+        <p className="hero-subtitle">
+          Quantum Financial Security is a self-custody portal for backing up, moving,
+          and monitoring your digital assets across chains — with bank-grade
+          safeguards you actually control.
         </p>
-        <Link to="/login" className="btn btn-primary btn-lg rounded-pill px-4" style={{ boxShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>Secure now</Link>
+
+        <div className="hero-actions">
+          <Link to="/login" className="hero-btn hero-btn--primary">
+            Secure my assets
+            <span className="material-symbols-outlined">arrow_forward</span>
+          </Link>
+          <a href="#how-it-works" className="hero-btn hero-btn--ghost">
+            See how it works
+          </a>
+        </div>
+
+        <div className="hero-trust">
+          <div className="hero-trust__item">
+            <span className="material-symbols-outlined">shield_lock</span>
+            256-bit encrypted vaults
+          </div>
+          <div className="hero-trust__item">
+            <span className="material-symbols-outlined">key</span>
+            You hold the keys
+          </div>
+          <div className="hero-trust__item">
+            <span className="material-symbols-outlined">bolt</span>
+            Settles in seconds
+          </div>
+        </div>
       </div>
-    </div>
+
+      <a href="#trust" className="hero-scroll-cue" aria-label="Scroll down">
+        <span className="material-symbols-outlined">keyboard_arrow_down</span>
+      </a>
+    </section>
   );
 };
 

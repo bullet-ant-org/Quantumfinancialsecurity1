@@ -1,49 +1,81 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/qfswhite.png'; // Ensure you have a logo image in the specified path
+import { useTheme } from '../contexts/ThemeContext';
+import logo from '../assets/qfswhite.png';
+import './Navbar.css';
+
+const NAV_LINKS = [
+  { href: '#features', label: 'Features' },
+  { href: '#how-it-works', label: 'How it works' },
+  { href: '#security', label: 'Security' },
+  { href: '#portfolio', label: 'Reach' },
+  { href: '#faq', label: 'FAQ' },
+];
+
 const Navbar = () => {
+  const { isDarkMode, toggleTheme } = useTheme();
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <nav 
-      className="navbar navbar-expand-lg navbar-dark sticky-top" 
-      style={{ 
-        backgroundColor: 'rgba(33, 37, 41, 0.13)', // Semi-transparent dark background
-        backdropFilter: 'blur(10px)', 
-        zIndex: '1000'
-      }}
-    >
-      <div className="container-fluid">
-        {/* Logo on the left */}
-        <Link className="navbar-brand" to="/">
-            <img src={logo} alt="Logo" width="50" height="50" className="d-inline-block align-top" />
+    <nav className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
+      <div className="site-nav__inner">
+        <Link className="site-nav__brand" to="/" onClick={closeMenu}>
+          <img src={logo} alt="QFS logo" />
+          <span>Quantum<em>FS</em></span>
         </Link>
 
-        {/* Toggler for mobile view */}
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="material-symbols-outlined">
-            sort
-          </span>
-        </button>
+        <ul className="site-nav__links">
+          {NAV_LINKS.map((link) => (
+            <li key={link.href}>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
 
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {/* Hyperlinks in the middle */}
-          <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <a className="nav-link" href="#features">Features</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#faq">About</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#portfolio">Portfolio</a>
-            </li>
-          </ul>
-
-          {/* Login button to the right */}
-          <Link to="/login" className="btn btn-primary rounded-pill">Login</Link>
+        <div className="site-nav__actions">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label="Toggle color theme"
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>
+              {isDarkMode ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
+          <Link to="/login" className="nav-btn-ghost">Sign in</Link>
+          <Link to="/login" className="nav-btn-solid">Get started</Link>
         </div>
+
+        <button
+          className="site-nav__toggler"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label="Toggle navigation"
+          aria-expanded={menuOpen}
+        >
+          <span className="material-symbols-outlined">{menuOpen ? 'close' : 'menu'}</span>
+        </button>
+      </div>
+
+      <div className={`site-nav__mobile ${menuOpen ? 'open' : ''}`}>
+        {NAV_LINKS.map((link) => (
+          <a key={link.href} href={link.href} onClick={closeMenu}>{link.label}</a>
+        ))}
+        <Link to="/login" className="nav-btn-ghost" onClick={closeMenu}>Sign in</Link>
+        <Link to="/login" className="nav-btn-solid" onClick={closeMenu}>Get started</Link>
       </div>
     </nav>
   );
 };
 
-export default Navbar
+export default Navbar;
