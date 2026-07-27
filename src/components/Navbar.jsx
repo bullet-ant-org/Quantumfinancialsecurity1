@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
 import logo from '../assets/qfswhite.png';
 import './Navbar.css';
 
@@ -13,7 +12,6 @@ const NAV_LINKS = [
 ];
 
 const Navbar = () => {
-  const { isDarkMode, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -43,16 +41,6 @@ const Navbar = () => {
         </ul>
 
         <div className="site-nav__actions">
-          <button
-            className="theme-toggle-btn"
-            onClick={toggleTheme}
-            aria-label="Toggle color theme"
-            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>
-              {isDarkMode ? 'light_mode' : 'dark_mode'}
-            </span>
-          </button>
           <Link to="/login" className="nav-btn-ghost">Sign in</Link>
           <Link to="/login" className="nav-btn-solid">Get started</Link>
         </div>

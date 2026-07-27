@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
 
 const DashboardNavbar = ({ toggleSidebar }) => {
   const [user, setUser] = useState(null);
@@ -9,7 +8,6 @@ const DashboardNavbar = ({ toggleSidebar }) => {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme } = useTheme();
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('token');
   const notificationDropdownRef = useRef(null);
@@ -110,12 +108,6 @@ const DashboardNavbar = ({ toggleSidebar }) => {
       </div>
 
       <div className="navbar-right">
-        <button className="theme-toggle-btn" onClick={toggleTheme} title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
-          <span className="material-symbols-outlined">
-            {isDarkMode ? 'light_mode' : 'dark_mode'}
-          </span>
-        </button>
-
         <div className="notification-dropdown-container" ref={notificationDropdownRef}>
           <button
             className="notification-bell"

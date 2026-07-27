@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import './UserDashboard.css';
 import {
   Chart as ChartJS,
   ArcElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
   Tooltip,
   Legend,
 } from 'chart.js';
@@ -16,286 +13,258 @@ import XRPLogo from '../assets/xrplogo.png';
 import XLMLogo from '../assets/xlmlogo.png';
 import USDTLogo from '../assets/usdtlogo.png';
 
-ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const CHART_COLORS = ['#00e1ff', '#ff4b8d', '#ffd700', '#2ee6a8', '#ff9800', '#9c27b0', '#3f51b5'];
 
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [news, setNews] = useState([]);
-  const [chartData, setChartData] = useState(null);
+  const [ticketCount, setTicketCount] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState('');
 
-  // Use the market data hook
   const { marketData, loading: marketLoading } = useMarketData();
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const localUser = JSON.parse(localStorage.getItem('user'));
-    if (localUser) {
-      setUser(localUser);
+    const localUser = JSON.parse(localStorage.getItem('user') || 'null');
+    if (localUser) setUser(localUser);
+
+    if (!token) {
+      setLoading(false);
+      return;
     }
 
-    const fetchData = async () => {
+    const headers = { Authorization: `Bearer ${token}` };
+
+    // Each data source is fetched and handled independently so that one
+    // failing or unavailable endpoint never blanks out the whole dashboard.
+    const fetchPortfolio = async () => {
       try {
-        setLoading(true);
-        const headers = { 'Authorization': `Bearer ${token}` };
-
-        // Always try to fetch portfolio data - the backend will handle wallet connection checks
-        const [portfolioRes, transactionsRes, newsRes] = await Promise.all([
-          fetch(`${apiUrl}/portfolio`, { headers }),
-          fetch(`${apiUrl}/transactions`, { headers }),
-          fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN'),
-        ]);
-
-        if (portfolioRes.ok) {
-          const portfolioData = await portfolioRes.json();
-          // Correctly handle the new portfolio controller response structure
-          if (portfolioData.isAdmin) {
-            // Admin users don't have a personal portfolio on this dashboard.
-            setPortfolio(null);
-          } else {
-            setPortfolio(portfolioData.portfolio);
-          }
-        } else {
-          const errorData = await portfolioRes.json().catch(() => ({}));
-          console.error('Failed to fetch portfolio data:', errorData?.message || 'Unknown error');
-          setPortfolio(null);
-        }
-
-        if (transactionsRes.ok) {
-          const transactionsData = await transactionsRes.json();
-          const sortedTransactions = (transactionsData.transactions || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          setTransactions(sortedTransactions.slice(0, 7));
-        }
-
-        if (newsRes.ok) {
-          const newsData = await newsRes.json();
-          setNews(newsData.Data.slice(0, 7));
-        }
-
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        const res = await fetch(`${apiUrl}/portfolio`, { headers });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setPortfolio(data.isAdmin ? null : data.portfolio);
+      } catch {
+        setPortfolio(null);
       }
     };
 
-    fetchData();
+    const fetchTransactions = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/transactions`, { headers });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const sorted = (data.transactions || []).sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setTransactions(sorted.slice(0, 6));
+      } catch {
+        setTransactions([]);
+      }
+    };
+
+    const fetchTickets = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/tickets`, { headers });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const tickets = data.tickets || data || [];
+        const open = Array.isArray(tickets)
+          ? tickets.filter((t) => t.status !== 'closed' && t.status !== 'resolved').length
+          : 0;
+        setTicketCount(open);
+      } catch {
+        setTicketCount(null);
+      }
+    };
+
+    Promise.allSettled([fetchPortfolio(), fetchTransactions(), fetchTickets()]).finally(() => {
+      setLoading(false);
+    });
   }, [apiUrl, token]);
 
-  useEffect(() => {
-    if (portfolio && portfolio.assets && portfolio.assets.length > 0) {
-      const labels = portfolio.assets.map(asset => asset.symbol);
-      const dataValues = portfolio.assets.map(asset => asset.value || 0);
-      setChartData({
-        labels,
-        datasets: [{
-          data: dataValues,
-          backgroundColor: [
-            '#00e1ff', '#ff4b8d', '#ffd700', '#4caf50', '#ff9800', '#9c27b0', '#3f51b5'
-          ],
-          borderColor: '#1a1a1a',
-          borderWidth: 2,
-        }]
-      });
-    }
-  }, [portfolio]);
+  const assets = portfolio?.assets || [];
+  const getAsset = (symbol) => assets.find((a) => a.symbol === symbol);
 
+  const chartData = assets.length > 0 ? {
+    labels: assets.map((a) => a.symbol),
+    datasets: [{
+      data: assets.map((a) => a.value || 0),
+      backgroundColor: CHART_COLORS,
+      borderColor: 'transparent',
+      borderWidth: 2,
+    }],
+  } : null;
 
+  const isVerified = Boolean(user?.stellarAddress || user?.rippleAddress);
 
-  if (loading) return <div className="text-white text-center p-5">Loading Dashboard...</div>;
-  if (error) return <div className="text-danger text-center p-5">{error}</div>;
-
-  // Check if user has connected wallet (verified status)
-  const isVerified = user?.stellarAddress || user?.rippleAddress;
+  if (loading) {
+    return (
+      <div className="dash-loading">
+        <div className="dash-loading__spinner" />
+        <p>Loading your dashboard\u2026</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="user-dashboard animated">
-      {/* User Details Section */}
-      <div className="user-details-section">
-        <div className="user-info-grid">
-          <div className="user-info-item">
-            <span className="info-label">Username:</span>
-            <span className="info-value">{user?.username || 'N/A'}</span>
-          </div>
-          <div className="user-info-item">
-            <span className="info-label">Full Name:</span>
-            <span className="info-value">{user?.fullName || 'N/A'}</span>
-          </div>
-          <div className="user-info-item">
-            <span className="info-label">Account Status:</span>
-            <div className="status-indicator">
-              <span className="status-text">{isVerified ? 'Verified' : 'Unverified'}</span>
-              <div className={`status-circle ${isVerified ? 'verified' : 'unverified'}`}></div>
-            </div>
-          </div>
-          <div className="user-info-item">
-            <span className="info-label">Sign-up Date:</span>
-            <span className="info-value">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</span>
-          </div>
+    <div className="user-dashboard">
+      {loadError && <div className="dash-banner">{loadError}</div>}
+
+      <div className="dash-header">
+        <div>
+          <h1>Welcome back{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}</h1>
+          <p>Here's what's happening with your vault today.</p>
+        </div>
+        <div className={`verify-pill ${isVerified ? 'verified' : 'unverified'}`}>
+          <span className="verify-pill__dot" />
+          {isVerified ? 'Wallet verified' : 'Wallet not connected'}
         </div>
       </div>
 
-      {/* Balances Section */}
-      <div className="balances-section">
-        <h3 className="section-title">Account Balances</h3>
-        <div className="balances-grid">
-          <div className="balance-card">
-            <div className="balance-icon">
-              <img src={XRPLogo} alt="XRP" className="crypto-logo" />
+      <div className="dash-grid">
+        <section className="dash-card dash-card--balances">
+          <h3>Account balances</h3>
+          <div className="balance-list">
+            <div className="balance-row">
+              <img src={XRPLogo} alt="XRP" />
+              <div className="balance-row__info">
+                <span className="balance-row__symbol">XRP</span>
+                <span className="balance-row__label">Ripple</span>
+              </div>
+              <span className="balance-row__amount">
+                {getAsset('XRP')?.quantity?.toFixed(4) ?? '0.0000'}
+              </span>
             </div>
-            <div className="balance-info">
-              <span className="balance-symbol">XRP</span>
-              <span className="balance-amount">
-                {portfolio?.assets?.find(asset => asset.symbol === 'XRP')?.quantity?.toFixed(4) || '0.0000'}
+            <div className="balance-row">
+              <img src={XLMLogo} alt="XLM" />
+              <div className="balance-row__info">
+                <span className="balance-row__symbol">XLM</span>
+                <span className="balance-row__label">Stellar</span>
+              </div>
+              <span className="balance-row__amount">
+                {getAsset('XLM')?.quantity?.toFixed(4) ?? '0.0000'}
               </span>
             </div>
           </div>
-          <div className="balance-card">
-            <div className="balance-icon">
-              <img src={XLMLogo} alt="XLM" className="crypto-logo" />
-            </div>
-            <div className="balance-info">
-              <span className="balance-symbol">XLM</span>
-              <span className="balance-amount">
-                {portfolio?.assets?.find(asset => asset.symbol === 'XLM')?.quantity?.toFixed(4) || '0.0000'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+          {!portfolio && (
+            <p className="balance-empty">Connect a wallet to see live balances here.</p>
+          )}
+        </section>
 
-      {/* Rates Section */}
-      <div className="rates-section">
-        <h3 className="section-title">Market Rates</h3>
-        <div className="rates-grid">
-          <div className="rate-card">
-            <div className="rate-header">
-              <div className="rate-pair">
-                <img src={XRPLogo} alt="XRP" className="rate-icon crypto-logo-small" />
-                <span className="rate-names">XRP/USDT</span>
-              </div>
+        <section className="dash-card dash-card--allocation">
+          <h3>Portfolio allocation</h3>
+          {chartData ? (
+            <div className="allocation-chart">
+              <Doughnut
+                data={chartData}
+                options={{
+                  plugins: { legend: { position: 'bottom', labels: { color: 'var(--text-secondary)', boxWidth: 10, padding: 14 } } },
+                  cutout: '68%',
+                }}
+              />
             </div>
-            <div className="rate-value">
-              <span className={`rate-trend ${marketData.XRP.change24h >= 0 ? 'up' : marketData.XRP.change24h < 0 ? 'down' : 'neutral'}`}>
-                <span className="material-symbols-outlined">
-                  {marketData.XRP.change24h > 0 ? 'trending_up' : marketData.XRP.change24h < 0 ? 'trending_down' : 'trending_flat'}
-                </span>
-              </span>
-              <span className="current-rate">
-                {marketLoading ? '...' : `$${marketData.XRP.price.toFixed(4)}`}
-              </span>
+          ) : (
+            <div className="allocation-empty">
+              <span className="material-symbols-outlined">pie_chart</span>
+              <p>No assets to show yet</p>
+            </div>
+          )}
+        </section>
 
-              <div className="rate-change">
-                <span className={`change-percent ${marketData.XRP.change24h >= 0 ? 'positive' : 'negative'}`}>
-                  {marketData.XRP.change24h >= 0 ? '+' : ''}{marketData.XRP.change24h.toFixed(2)}%
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="rate-card">
-            <div className="rate-header">
-              <div className="rate-pair">
-                <img src={XLMLogo} alt="XLM" className="rate-icon crypto-logo-small" />
-                <span className="rate-names">XLM/USDT</span>
-              </div>
-            </div>
-            <div className="rate-value">
-               <span className={`rate-trend ${marketData.XLM.change24h >= 0 ? 'up' : marketData.XLM.change24h < 0 ? 'down' : 'neutral'}`}>
-                <span className="material-symbols-outlined">
-                  {marketData.XLM.change24h > 0 ? 'trending_up' : marketData.XLM.change24h < 0 ? 'trending_down' : 'trending_flat'}
-                </span>
-              </span>
-              <span className="current-rate">
-
-                {marketLoading ? '...' : `$${marketData.XLM.price.toFixed(4)}`}
-              </span>
-
-              <div className="rate-change">
-                <span className={`change-percent ${marketData.XLM.change24h >= 0 ? 'positive' : 'negative'}`}>
-                  {marketData.XLM.change24h >= 0 ? '+' : ''}{marketData.XLM.change24h.toFixed(2)}%
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="rate-card">
-            <div className="rate-header">
-              <div className="rate-pair">
-                <img src={USDTLogo} alt="USDT" className="rate-icon crypto-logo-small" />
-                <span className="rate-names">USDT/USD</span>
-              </div>
-            </div>
-            <div className="rate-value">
-              <span className={`rate-trend ${marketData.USDT.change24h >= 0 ? 'up' : marketData.USDT.change24h < 0 ? 'down' : 'neutral'}`}>
-                <span className="material-symbols-outlined">
-                  {marketData.USDT.change24h > 0 ? 'trending_up' : marketData.USDT.change24h < 0 ? 'trending_down' : 'trending_flat'}
-                </span>
-              </span>
-              <span className="current-rate">
-                {marketLoading ? '...' : `$${marketData.USDT.price.toFixed(4)}`}
-              </span>
-
-              <div className="rate-change">
-                <span className={`change-percent ${marketData.USDT.change24h >= 0 ? 'positive' : 'negative'}`}>
-                  {marketData.USDT.change24h >= 0 ? '+' : ''}{marketData.USDT.change24h.toFixed(2)}%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    
-
-      <div className="row g-4 mt-4">
-        <div className="col-lg-12">
-          <div className="dashboard-card h-100">
-            <h5 className="card-title"><span className="material-symbols-outlined">trending_up</span> Market Overview</h5>
-            <div className="tradingview-widget-wrapper">
-              <TradingViewWidget />
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Transactions and Activity Section */}
-      <div className="activity-section">
-        <div className="activity-header">
-          <h4 className="activity-title">Recent Activity</h4>
-        </div>
-        <div className="activity-content">
-          <div className="activity-item">
-            <div className="activity-icon">
+        <section className="dash-card dash-card--activity">
+          <h3>Snapshot</h3>
+          <div className="snapshot-list">
+            <div className="snapshot-row">
               <span className="material-symbols-outlined">swap_vert</span>
+              <div>
+                <span className="snapshot-row__label">Recent transactions</span>
+                <span className="snapshot-row__value">{transactions.length}</span>
+              </div>
             </div>
-            <div className="activity-details">
-              <span className="activity-label">Recent Transactions</span>
-              <span className="activity-count">{transactions.length} transactions</span>
-            </div>
-          </div>
-          <div className="activity-item">
-            <div className="activity-icon">
+            <div className="snapshot-row">
               <span className="material-symbols-outlined">confirmation_number</span>
-            </div>
-            <div className="activity-details">
-              <span className="activity-label">Open Tickets</span>
-              <span className="activity-count">0 tickets</span>
-            </div>
-          </div>
-          <div className="activity-item">
-            <div className="activity-icon">
-              <span className="material-symbols-outlined">feed</span>
-            </div>
-            <div className="activity-details">
-              <span className="activity-label">Latest News</span>
-              <span className="activity-count">{news.length} articles</span>
+              <div>
+                <span className="snapshot-row__label">Open support tickets</span>
+                <span className="snapshot-row__value">{ticketCount ?? '\u2014'}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
+
+      <section className="dash-card dash-card--rates">
+        <h3>Market rates</h3>
+        <div className="rates-grid">
+          {[
+            { symbol: 'XRP', logo: XRPLogo, pair: 'XRP/USDT' },
+            { symbol: 'XLM', logo: XLMLogo, pair: 'XLM/USDT' },
+            { symbol: 'USDT', logo: USDTLogo, pair: 'USDT/USD' },
+          ].map((row) => {
+            const m = marketData[row.symbol];
+            const up = m.change24h >= 0;
+            return (
+              <div className="rate-card" key={row.symbol}>
+                <div className="rate-card__top">
+                  <img src={row.logo} alt={row.symbol} />
+                  <span>{row.pair}</span>
+                </div>
+                <div className="rate-card__bottom">
+                  <span className="rate-card__price">
+                    {marketLoading ? '\u2026' : `$${m.price.toFixed(4)}`}
+                  </span>
+                  <span className={`rate-card__change ${up ? 'up' : 'down'}`}>
+                    <span className="material-symbols-outlined">{up ? 'trending_up' : 'trending_down'}</span>
+                    {up ? '+' : ''}{m.change24h.toFixed(2)}%
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="dash-card dash-card--market">
+        <h3><span className="material-symbols-outlined">trending_up</span> Market overview</h3>
+        <div className="tradingview-widget-wrapper">
+          <TradingViewWidget />
+        </div>
+      </section>
+
+      <section className="dash-card dash-card--transactions">
+        <h3>Recent activity</h3>
+        {transactions.length > 0 ? (
+          <div className="tx-list">
+            {transactions.map((tx) => (
+              <div className="tx-row" key={tx._id}>
+                <span className={`tx-row__icon ${tx.type}`}>
+                  <span className="material-symbols-outlined">
+                    {tx.type === 'deposit' ? 'south_west' : tx.type === 'withdraw' ? 'north_east' : 'swap_horiz'}
+                  </span>
+                </span>
+                <div className="tx-row__info">
+                  <span className="tx-row__type">{tx.type}</span>
+                  <span className="tx-row__date">{new Date(tx.createdAt).toLocaleDateString()}</span>
+                </div>
+                <span className="tx-row__amount">
+                  {tx.amount} {tx.currency || ''}
+                </span>
+                <span className={`tx-row__status ${tx.status}`}>{tx.status}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="tx-empty">
+            <span className="material-symbols-outlined">receipt_long</span>
+            <p>No transactions yet.</p>
+          </div>
+        )}
+      </section>
     </div>
   );
 };

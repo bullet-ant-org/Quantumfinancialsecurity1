@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import MatrixRain from '../components/MatrixRain';
 import './Auth.css';
 
 const LOGIN_STEPS = [
@@ -216,8 +215,8 @@ const Auth = () => {
 
       <div className="auth-shell">
         <aside className="auth-visual">
-          <MatrixRain active={phase !== 'form'} />
-          <div className="auth-visual__scrim" />
+          <div className="auth-visual__orb auth-visual__orb--one" />
+          <div className="auth-visual__orb auth-visual__orb--two" />
           <div className="auth-visual__content">
             <span className="auth-visual__badge">
               <span className="material-symbols-outlined">shield_lock</span>
@@ -445,7 +444,6 @@ const Auth = () => {
 
             {phase !== 'form' && (
               <div className="auth-overlay">
-                <MatrixRain active className="auth-overlay__rain" />
                 <div className="auth-overlay__content">
                   {phase === 'processing' && <div className="auth-overlay__spinner" />}
                   {phase === 'success' && (

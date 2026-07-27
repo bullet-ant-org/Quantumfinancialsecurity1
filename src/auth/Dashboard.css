@@ -8,15 +8,16 @@
 }
 
 .sidebar {
-  width: 260px;
+  width: 268px;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   position: fixed;
   top: 0;
-  left: -260px;
+  left: -268px;
   height: 100%;
   z-index: 1040;
   transition: left 0.3s ease-in-out, background-color 0.3s ease, border-color 0.3s ease;
+  box-shadow: 12px 0 40px rgba(0, 0, 0, 0.18);
 }
 
 .sidebar.open {
@@ -303,12 +304,12 @@
 .sidebar-toggle-btn {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 1.5rem;
 }
 
 .username {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
 }
 
 /* User Dropdown */
@@ -393,7 +394,7 @@
     left: 0;
   }
   .main-content {
-    margin-left: 260px;
+    margin-left: 268px;
   }
   .sidebar-toggle-btn {
     display: none;
@@ -401,7 +402,7 @@
 }
 
 @media (max-width: 991.98px) {
-  .main-content.sidebar-open { transform: translateX(260px); }
+  .main-content.sidebar-open { transform: translateX(268px); }
 }
 
 /* Mobile Notification Dropdown */
