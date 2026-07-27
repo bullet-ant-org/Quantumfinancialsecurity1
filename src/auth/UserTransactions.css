@@ -1,5 +1,7 @@
 .tx-page {
   animation: dash-fade-in 0.4s ease-out;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .tx-page-status {
@@ -15,7 +17,7 @@
 .tx-page__title {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: clamp(1.35rem, 3vw, 1.6rem);
   color: var(--text-primary);
   margin-bottom: 0.3rem;
 }
@@ -40,15 +42,21 @@
   gap: 0.5rem;
   flex: 1;
   min-width: 220px;
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
   border-radius: 12px;
   border: 1.5px solid var(--border-color);
   background: var(--bg-card);
+  transition: border-color 0.2s ease;
+}
+
+.tx-search:focus-within {
+  border-color: var(--accent-primary);
 }
 
 .tx-search .material-symbols-outlined {
   color: var(--text-muted);
   font-size: 1.15rem;
+  flex-shrink: 0;
 }
 
 .tx-search input {
@@ -58,6 +66,7 @@
   color: var(--text-primary);
   font-size: 0.9rem;
   width: 100%;
+  min-width: 0;
 }
 
 .tx-search input::placeholder {
@@ -65,7 +74,7 @@
 }
 
 .tx-select {
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
   border-radius: 12px;
   border: 1.5px solid var(--border-color);
   background: var(--bg-card);
@@ -74,14 +83,22 @@
   font-weight: 500;
   outline: none;
   cursor: pointer;
+  flex: 1;
+  min-width: 140px;
 }
 
-/* Table */
+@media (max-width: 560px) {
+  .tx-filters { flex-direction: column; }
+  .tx-search, .tx-select { width: 100%; min-width: 0; }
+}
+
+/* Table (desktop) */
 .tx-table-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 1px 3px var(--shadow-color);
 }
 
 .tx-table {
@@ -91,7 +108,7 @@
 
 .tx-table thead th {
   text-align: left;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.5rem;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -110,10 +127,11 @@
 }
 
 .tx-row td {
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
   font-size: 0.88rem;
   color: var(--text-secondary);
+  vertical-align: middle;
 }
 
 .tx-row:last-child td {
@@ -127,8 +145,28 @@
 }
 
 .tx-row__type {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   font-weight: 600;
   color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.tx-type-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.tx-type-icon .material-symbols-outlined {
+  font-size: 1.05rem;
 }
 
 .tx-amount {
@@ -154,22 +192,64 @@
 
 .tx-empty-row {
   text-align: center;
-  padding: 3rem 1rem !important;
+  padding: 3.5rem 1rem !important;
   color: var(--text-muted) !important;
 }
 
+/* Mobile: turn each row into a labeled card */
 @media (max-width: 768px) {
-  .tx-table thead { display: none; }
-  .tx-table, .tx-table tbody, .tx-row, .tx-row td {
+  .tx-table-card {
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .tx-table thead {
+    display: none;
+  }
+
+  .tx-table, .tx-table tbody {
     display: block;
     width: 100%;
   }
+
   .tx-row {
-    padding: 0.9rem 1.1rem;
-    border-bottom: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.4rem 0.75rem;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
   }
+
   .tx-row td {
+    display: block;
+    padding: 0;
     border-bottom: none;
-    padding: 0.15rem 0;
+    font-size: 0.85rem;
+  }
+
+  .tx-row td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.15rem;
+  }
+
+  .tx-row__type { grid-column: 1; }
+  .tx-row__desc { grid-column: 1 / -1; }
+  td[data-label="Date"] { grid-column: 1 / -1; order: -1; }
+  td[data-label="Amount"] { grid-column: 2; grid-row: 1; text-align: right; }
+  td[data-label="Status"] { grid-column: 2; text-align: right; }
+
+  .tx-empty-row {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
   }
 }

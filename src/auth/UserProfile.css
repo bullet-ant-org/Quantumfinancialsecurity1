@@ -49,6 +49,7 @@
   border: 1px solid var(--border-color);
   border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 1px 3px var(--shadow-color);
 }
 
 .profile-summary-card::before {
@@ -159,6 +160,7 @@
   border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 1.75rem;
+  box-shadow: 0 1px 3px var(--shadow-color);
 }
 
 .profile-tabs {
@@ -168,6 +170,8 @@
   border-radius: 999px;
   background: var(--bg-tertiary);
   width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
   margin-bottom: 1.75rem;
 }
 
@@ -273,8 +277,20 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .profile-container {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-form-card, .profile-summary-card {
+    border-radius: 16px;
+  }
+  .profile-form-card {
+    padding: 1.25rem;
+  }
+  .tab-button {
+    white-space: nowrap;
   }
 }

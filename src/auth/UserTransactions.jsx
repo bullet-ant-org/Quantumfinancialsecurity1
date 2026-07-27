@@ -167,20 +167,27 @@ const UserTransactions = () => {
             <tbody>
               {filteredTransactions.map(tx => (
                 <tr key={tx._id} onClick={() => setSelectedTransaction(tx)} className="tx-row">
-                  <td className="tx-row__date">{new Date(tx.createdAt).toLocaleString()}</td>
-                  <td className="tx-row__type">{tx.displayType}</td>
-                  <td className="tx-row__desc">
+                  <td className="tx-row__date" data-label="Date">{new Date(tx.createdAt).toLocaleString()}</td>
+                  <td className="tx-row__type" data-label="Type">
+                    <span className={`tx-type-icon ${tx.type}`}>
+                      <span className="material-symbols-outlined">
+                        {tx.type === 'deposit' ? 'south_west' : tx.type === 'withdraw' ? 'north_east' : tx.type === 'send' ? 'call_made' : 'call_received'}
+                      </span>
+                    </span>
+                    {tx.displayType}
+                  </td>
+                  <td className="tx-row__desc" data-label="Description">
                     {tx.type === 'send' && (tx.recipientUsername || tx.recipientEmail) ? `Sent to ${tx.recipientUsername || tx.recipientEmail}` : ''}
                     {tx.type === 'request' && tx.senderIdentifier ? `Request from ${tx.senderIdentifier}` : ''}
                     {tx.type === 'deposit' ? 'Deposit' : ''}
                     {tx.type === 'withdraw' ? 'Withdrawal' : ''}
                   </td>
-                  <td>
+                  <td data-label="Amount">
                     <span className={`tx-amount ${getAmountClass(tx.displayType)}`}>
                       {tx.displayAmount}
                     </span>
                   </td>
-                  <td>
+                  <td data-label="Status">
                     <span className={`tx-status ${getStatusClass(tx.status)}`}>
                       {tx.status}
                     </span>
