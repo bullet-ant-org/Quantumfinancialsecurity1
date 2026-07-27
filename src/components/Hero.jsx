@@ -55,7 +55,7 @@ const Hero = () => {
           <span className="hero-title__gradient"> whatever comes next.</span>
         </h1>
 
-        <p className="hero-subtitle">
+        <p className="hero-subtitle text-dark">
           Quantum Financial Security is a self-custody portal for backing up, moving,
           and monitoring your digital assets across chains — with bank-grade
           safeguards you actually control.
