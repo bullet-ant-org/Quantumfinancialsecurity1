@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import "./UserProfile.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const ProfileSummaryCard = ({ user }) => (
-  <div className="profile-summary-card">
-    <div className="profile-avatar-wrapper">
-      <div className="profile-avatar">
-        <span className="material-symbols-outlined">account_circle</span>
-      </div>
-      <button className="avatar-upload-button" title="Upload new picture">
-        <span className="material-symbols-outlined">photo_camera</span>
-      </button>
-    </div>
-    <h2 className="profile-username">{user.fullName || user.username}</h2>
-    <p className="profile-email">{user.email}</p>
-    <div className="profile-details">
-      <p><strong> <span className='colorchange'>Role:</span></strong> <span className="profile-role">{user.role}</span></p>
-      <p><strong><span className='colorchange'>Joined:</span></strong> <span>{new Date(user.createdAt).toLocaleDateString()}</span></p>
-    </div>
-  </div>
-);
+const getInitials = (name) => {
+  if (!name) return 'U';
+  return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('');
+};
 
 const ProfileUpdateForm = ({ user, onUpdate, loading }) => {
   const [formData, setFormData] = useState(user);
@@ -41,21 +26,21 @@ const ProfileUpdateForm = ({ user, onUpdate, loading }) => {
 
   return (
     <form onSubmit={handleSubmit} className="profile-form">
-      <h3>Edit Information</h3>
+      <h3>Edit information</h3>
       <div className="input-group">
         <input id="fullName" type="text" name="fullName" value={formData.fullName || ''} onChange={handleChange} placeholder=" " required />
-        <label htmlFor="fullName">Full Name</label>
+        <label htmlFor="fullName">Full name</label>
       </div>
       <div className="input-group">
         <input id="username" type="text" name="username" value={formData.username} onChange={handleChange} placeholder=" " required />
         <label htmlFor="username">Username</label>
       </div>
       <div className="input-group">
-        <input id="email" type="email" name="email" value={formData.email} className="form-control" placeholder=" " disabled />
+        <input id="email" type="email" name="email" value={formData.email} placeholder=" " disabled />
         <label htmlFor="email">Email</label>
       </div>
       <button type="submit" className="profile-button" disabled={loading}>
-        {loading ? 'Saving...' : 'Save Changes'}
+        {loading ? 'Saving\u2026' : 'Save changes'}
       </button>
     </form>
   );
@@ -81,21 +66,21 @@ const PasswordUpdateForm = ({ onUpdate, loading }) => {
 
   return (
     <form onSubmit={handleSubmit} className="profile-form">
-      <h3>Change Password</h3>
+      <h3>Change password</h3>
       <div className="input-group">
         <input id="currentPassword" type="password" name="currentPassword" value={passwordData.currentPassword} onChange={handleChange} placeholder=" " required />
-        <label htmlFor="currentPassword">Current Password</label>
+        <label htmlFor="currentPassword">Current password</label>
       </div>
       <div className="input-group">
         <input id="newPassword" type="password" name="newPassword" value={passwordData.newPassword} onChange={handleChange} placeholder=" " required />
-        <label htmlFor="newPassword">New Password</label>
+        <label htmlFor="newPassword">New password</label>
       </div>
       <div className="input-group">
         <input id="confirmNewPassword" type="password" name="confirmNewPassword" value={passwordData.confirmNewPassword} onChange={handleChange} placeholder=" " required />
-        <label htmlFor="confirmNewPassword">Confirm New Password</label>
+        <label htmlFor="confirmNewPassword">Confirm new password</label>
       </div>
       <button type="submit" className="profile-button" disabled={loading}>
-        {loading ? 'Saving...' : 'Change Password'}
+        {loading ? 'Saving\u2026' : 'Change password'}
       </button>
     </form>
   );
@@ -109,7 +94,6 @@ const UserProfile = () => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [notification, setNotification] = useState({ type: '', message: '' });
 
-  const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   const showNotification = (type, message) => {
@@ -122,11 +106,9 @@ const UserProfile = () => {
       try {
         setLoading(true);
         const res = await fetch(`${API_URL}/users/profile`, {
-          headers: { 'Authorization': `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) {
-          throw new Error('Could not fetch user profile.');
-        }
+        if (!res.ok) throw new Error('Could not fetch user profile.');
         const data = await res.json();
         setUser(data);
       } catch (err) {
@@ -143,7 +125,7 @@ const UserProfile = () => {
     try {
       const res = await fetch(`${API_URL}/users/profile`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
@@ -168,7 +150,7 @@ const UserProfile = () => {
     try {
       const res = await fetch(`${API_URL}/users/change-password`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           currentPassword: passwords.currentPassword,
           newPassword: passwords.newPassword,
@@ -185,44 +167,87 @@ const UserProfile = () => {
     }
   };
 
-  if (loading || !user) return <div className="loading-message">Loading Profile...</div>;
+  if (loading || !user) return <div className="loading-message">Loading profile\u2026</div>;
+
+  const joined = new Date(user.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 
   return (
-    <div className="user-profile-page">
-
-
+    <div className="fb-profile-page">
       {notification.message && (
-        <div className={`profile-notification ${notification.type} animated`}>
+        <div className={`profile-notification ${notification.type}`}>
           {notification.message}
         </div>
       )}
 
-      <div className="profile-container animated">
-        <ProfileSummaryCard user={user} />
-
-        <div className="profile-form-card">
-          <div className="profile-tabs">
-            <button className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
-              <span className="material-symbols-outlined">person</span>
-              <span className='colorchange'>Profile</span>
-            </button>
-            <button className={`tab-button ${activeTab === 'password' ? 'active' : ''}`} onClick={() => setActiveTab('password')}>
-              <span className="material-symbols-outlined">lock</span>
-              <span className='colorchange'>Security</span>
+      {/* Cover + avatar header, Facebook-style */}
+      <div className="fb-cover">
+        <div className="fb-cover__gradient" />
+        <div className="fb-header">
+          <div className="fb-avatar">
+            <span>{getInitials(user.fullName || user.username)}</span>
+            <button className="fb-avatar__camera" title="Change photo">
+              <span className="material-symbols-outlined">photo_camera</span>
             </button>
           </div>
-
-          <div className="tab-content">
-            {activeTab === 'profile' && (
-              <ProfileUpdateForm
-                user={{ ...user, fullName: user.fullName || '' }}
-                onUpdate={handleProfileUpdate}
-                loading={profileLoading} />
-            )}
-            {activeTab === 'password' && (
-              <PasswordUpdateForm onUpdate={handlePasswordUpdate} loading={passwordLoading} />
-            )}
+          <div className="fb-header__identity">
+            <h1>{user.fullName || user.username}</h1>
+            <p>@{user.username} &middot; {user.role === 'admin' ? 'Administrator' : 'Member'} since {joined}</p>
           </div>
+        </div>
+      </div>
+
+      {/* Tab bar */}
+      <div className="fb-tabbar">
+        <button className={`fb-tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
+          <span className="material-symbols-outlined">person</span>
+          Profile
+        </button>
+        <button className={`fb-tab ${activeTab === 'password' ? 'active' : ''}`} onClick={() => setActiveTab('password')}>
+          <span className="material-symbols-outlined">lock</span>
+          Security
+        </button>
+      </div>
+
+      {/* Two-column body, like Facebook's About page */}
+      <div className="fb-body">
+        <aside className="fb-intro-card">
+          <h4>Intro</h4>
+          <ul>
+            <li>
+              <span className="material-symbols-outlined">badge</span>
+              <div>
+                <span className="fb-intro-label">Role</span>
+                <span className="fb-intro-value">{user.role === 'admin' ? 'Administrator' : 'Member'}</span>
+              </div>
+            </li>
+            <li>
+              <span className="material-symbols-outlined">mail</span>
+              <div>
+                <span className="fb-intro-label">Email</span>
+                <span className="fb-intro-value">{user.email}</span>
+              </div>
+            </li>
+            <li>
+              <span className="material-symbols-outlined">calendar_month</span>
+              <div>
+                <span className="fb-intro-label">Joined</span>
+                <span className="fb-intro-value">{joined}</span>
+              </div>
+            </li>
+          </ul>
+        </aside>
+
+        <div className="fb-content-card">
+          {activeTab === 'profile' && (
+            <ProfileUpdateForm
+              user={{ ...user, fullName: user.fullName || '' }}
+              onUpdate={handleProfileUpdate}
+              loading={profileLoading}
+            />
+          )}
+          {activeTab === 'password' && (
+            <PasswordUpdateForm onUpdate={handlePasswordUpdate} loading={passwordLoading} />
+          )}
         </div>
       </div>
     </div>
