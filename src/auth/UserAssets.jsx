@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import {
   Chart as ChartJS,
   ArcElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
   Tooltip,
   Legend,
 } from 'chart.js';
@@ -15,7 +12,7 @@ import XRPLogo from '../assets/xrplogo.png';
 import XLMLogo from '../assets/xlmlogo.png';
 import USDTLogo from '../assets/usdtlogo.png';
 
-ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const NoWalletConnected = () => (
   <div className="assets-empty-state">
@@ -129,40 +126,12 @@ const UserAssets = () => {
         datasets: [{
           data,
           backgroundColor: backgroundColors,
-          borderColor: '#1a1a1a',
+          borderColor: 'var(--bg-card)',
           borderWidth: 2,
         }]
       });
     }
   }, [portfolio, isWalletConnected]);
-
-  const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'right', labels: { color: 'white', padding: 15, font: { size: 14 } } },
-    },
-    cutout: '70%',
-  };
-
-  const barOptions = {
-    indexAxis: 'y',
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-    },
-    scales: {
-      x: {
-        ticks: { color: 'white', font: { size: 12 } },
-        grid: { color: 'rgba(255, 255, 255, 0.1)' },
-      },
-      y: {
-        ticks: { color: 'white', font: { size: 12 } },
-        grid: { display: false },
-      },
-    },
-  };
 
   // Get logo for asset
   const getAssetLogo = (symbol) => {

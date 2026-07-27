@@ -39,7 +39,8 @@
 
 /* Summary card */
 .profile-summary-card {
-  padding: 2.25rem 1.75rem;
+  position: relative;
+  padding: 0 1.75rem 2.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,11 +48,22 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 20px;
+  overflow: hidden;
+}
+
+.profile-summary-card::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 96px;
+  background: var(--gradient-primary);
+  margin-bottom: -54px;
 }
 
 .profile-avatar-wrapper {
   position: relative;
   margin-bottom: 1.1rem;
+  z-index: 1;
 }
 
 .profile-avatar {
@@ -60,10 +72,17 @@
   width: 108px;
   height: 108px;
   border-radius: 50%;
-  background: var(--gradient-primary);
+  background: var(--bg-card);
+  border: 4px solid var(--bg-card);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.profile-avatar .material-symbols-outlined {
+  font-size: 4.5rem;
+  color: var(--accent-primary);
 }
 
 .avatar-upload-button {
