@@ -2,6 +2,10 @@
   animation: dash-fade-in 0.4s ease-out;
   max-width: 940px;
   margin: 0 auto;
+  background: var(--bg-card);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px var(--shadow-color);
+  overflow: hidden;
 }
 
 .loading-message {
@@ -37,14 +41,15 @@
 /* Cover + avatar header */
 .fb-cover {
   position: relative;
-  border-radius: 20px 20px 0 0;
   overflow: visible;
 }
 
 .fb-cover__gradient {
-  height: 220px;
-  border-radius: 20px 20px 0 0;
-  background: var(--gradient-primary);
+  height: 260px;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.35), transparent 45%),
+    radial-gradient(circle at 10% 85%, rgba(255, 255, 255, 0.2), transparent 50%),
+    var(--gradient-primary);
   position: relative;
 }
 
@@ -52,7 +57,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.25), transparent 55%);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.25;
 }
 
 .fb-header {
@@ -61,27 +68,27 @@
   align-items: flex-end;
   gap: 1.5rem;
   padding: 0 2rem;
-  margin-top: -64px;
+  margin-top: -72px;
 }
 
 .fb-avatar {
   position: relative;
-  width: 152px;
-  height: 152px;
+  width: 168px;
+  height: 168px;
   border-radius: 50%;
-  border: 5px solid var(--bg-card);
+  border: 6px solid var(--bg-card);
   background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .fb-avatar span {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: 3rem;
+  font-size: 3.3rem;
   color: var(--accent-primary);
 }
 
@@ -106,20 +113,21 @@
 }
 
 .fb-header__identity {
-  padding-bottom: 1.1rem;
+  padding-bottom: 1.35rem;
 }
 
 .fb-header__identity h1 {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: 1.65rem;
+  font-size: 1.85rem;
   color: var(--text-primary);
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.3rem;
+  letter-spacing: -0.01em;
 }
 
 .fb-header__identity p {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   margin: 0;
 }
 
@@ -167,13 +175,11 @@
 /* Body */
 .fb-body {
   background: var(--bg-card);
-  border-radius: 0 0 20px 20px;
   padding: 2rem;
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 1.5rem;
   align-items: start;
-  box-shadow: 0 1px 3px var(--shadow-color);
 }
 
 .fb-intro-card {
@@ -185,9 +191,11 @@
 .fb-intro-card h4 {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--text-primary);
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .fb-intro-card ul {
@@ -202,13 +210,19 @@
 .fb-intro-card li {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .fb-intro-card li .material-symbols-outlined {
-  font-size: 1.2rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
   color: var(--accent-primary);
-  margin-top: 0.1rem;
   flex-shrink: 0;
 }
 
@@ -319,19 +333,19 @@
 }
 
 @media (max-width: 600px) {
-  .fb-cover__gradient { height: 150px; border-radius: 16px 16px 0 0; }
+  .fb-cover__gradient { height: 170px; }
   .fb-header {
     flex-direction: column;
     align-items: center;
     text-align: center;
     padding: 0 1.25rem;
-    margin-top: -56px;
+    margin-top: -60px;
   }
-  .fb-avatar { width: 112px; height: 112px; }
-  .fb-avatar span { font-size: 2.1rem; }
+  .fb-avatar { width: 120px; height: 120px; border-width: 4px; }
+  .fb-avatar span { font-size: 2.2rem; }
   .fb-header__identity { padding-bottom: 0.5rem; }
   .fb-tabbar { padding: 0 1.25rem; justify-content: center; }
   .fb-tab { margin-right: 1.25rem; }
-  .fb-body { padding: 1.25rem; border-radius: 0 0 16px 16px; }
+  .fb-body { padding: 1.25rem; }
   .fb-content-card { padding: 1.25rem; }
 }
