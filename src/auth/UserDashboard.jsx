@@ -151,6 +151,42 @@ const UserDashboard = () => {
         </Link>
       </div>
 
+      <section className="atm-card-section">
+        <div className={`atm-card ${user?.cardStatus && user.cardStatus !== 'None' ? 'active' : 'empty'}`}>
+          <div className="atm-card__shine" />
+          <div className="atm-card__top">
+            <span className="atm-card__brand">QuantumFS</span>
+            <span className="material-symbols-outlined atm-card__chip">contactless</span>
+          </div>
+          <div className="atm-card__chip-icon" />
+          <div className="atm-card__number">
+            {user?.cardStatus && user.cardStatus !== 'None'
+              ? `•••• •••• •••• ${(user._id || user.username || '0000').slice(-4).padStart(4, '0')}`
+              : '•••• •••• •••• ••••'}
+          </div>
+          <div className="atm-card__bottom">
+            <div>
+              <span className="atm-card__label">Card holder</span>
+              <span className="atm-card__value">
+                {user?.cardStatus && user.cardStatus !== 'None' ? (user.fullName || user.username) : 'No card yet'}
+              </span>
+            </div>
+            <div>
+              <span className="atm-card__label">Tier</span>
+              <span className="atm-card__value">
+                {user?.cardStatus && user.cardStatus !== 'None' ? user.cardStatus : '—'}
+              </span>
+            </div>
+          </div>
+          {(!user?.cardStatus || user.cardStatus === 'None') && (
+            <Link to="/user/cards" className="atm-card__cta">
+              Get your card
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </Link>
+          )}
+        </div>
+      </section>
+
       <div className="dash-grid">
         <section className="dash-card dash-card--balances">
           <h3>Account balances</h3>

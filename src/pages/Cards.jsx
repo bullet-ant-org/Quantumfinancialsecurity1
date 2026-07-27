@@ -6,7 +6,6 @@ import Silvercard from '../assets/Cardsilver.png';
 import Goldcard from '../assets/Cardgold.png';
 import InsufficientBalanceModal from '../components/InsufficientBalanceModal';
 
-// Minimum balance requirements for each card tier
 const BRONZE_MIN_BALANCE = 10000;
 const SILVER_MIN_BALANCE = 50000;
 const GOLD_MIN_BALANCE = 100000;
@@ -17,11 +16,12 @@ const cardData = [
     tier: 'bronze',
     minBalance: BRONZE_MIN_BALANCE,
     image: Bronzecard,
-    description: 'The essential card for starting your journey. Enjoy foundational benefits and a solid start to your financial growth.',
+    tagline: 'For getting started',
+    description: 'A solid foundation for everyday spending, with no strings attached.',
     points: [
-      '1% Cashback on all purchases',
+      '1% cashback on all purchases',
       'Basic travel insurance coverage',
-      '24/7 Customer Support',
+      '24/7 customer support',
       'Contactless payments enabled',
       'No annual fee for the first year',
     ],
@@ -31,10 +31,12 @@ const cardData = [
     tier: 'silver',
     minBalance: SILVER_MIN_BALANCE,
     image: Silvercard,
-    description: 'Elevate your experience with the Silver card, offering enhanced rewards and exclusive perks for the discerning user.',
+    tagline: 'Most popular',
+    featured: true,
+    description: 'Enhanced rewards and everyday perks for the frequent spender.',
     points: [
-      '3% Cashback on dining and travel',
-      'Comprehensive travel and rental car insurance',
+      '3% cashback on dining and travel',
+      'Comprehensive travel & rental insurance',
       'Airport lounge access (2 visits/year)',
       'Dedicated concierge service',
       'Higher credit limits',
@@ -45,80 +47,64 @@ const cardData = [
     tier: 'gold',
     minBalance: GOLD_MIN_BALANCE,
     image: Goldcard,
-    description: 'The ultimate card for our premium clients. Access unparalleled benefits, luxury travel perks, and personalized services.',
+    tagline: 'For the power user',
+    description: 'Our top tier — built for clients who expect the best, everywhere.',
     points: [
-      '5% Cashback on all purchases',
+      '5% cashback on all purchases',
       'Premium global travel insurance',
-      'Unlimited airport lounge access worldwide',
+      'Unlimited worldwide lounge access',
       'Personalized 24/7 global concierge',
-      'Exclusive access to events and offers',
+      'Priority access to exclusive events',
     ],
   },
 ];
 
-const CardItem = ({ card, portfolio, onApply, onViewMore }) => {
+const PricingCard = ({ card, portfolio, onApply, onViewMore }) => {
   const isEligible = portfolio?.totalValue >= card.minBalance;
   const userBalance = portfolio?.totalValue ?? 0;
 
   return (
-    <div className={`card-item ${card.tier}`}>
-      {/* Card Header */}
-      <div className="card-item-header">
-        <div className="card-tier-display">
-          <span className="tier-emoji">
-            {card.tier === 'bronze' && '🥉'}
-            {card.tier === 'silver' && '🥈'}
-            {card.tier === 'gold' && '🥇'}
-          </span>
-          <h3 className="card-item-name">{card.name} Card</h3>
-        </div>
-        <div className="card-requirements">
-          <div className="min-balance-display">
-            <span className="balance-label">Min. Balance</span>
-            <span className="balance-amount">${card.minBalance.toLocaleString()}</span>
-          </div>
-          <span className={`eligibility-badge ${isEligible ? 'eligible' : 'ineligible'}`}>
-            {isEligible ? '✓ Eligible' : `Need $${(card.minBalance - userBalance).toLocaleString()}`}
-          </span>
-        </div>
+    <div className={`pricing-card ${card.tier} ${card.featured ? 'featured' : ''}`}>
+      {card.featured && <span className="pricing-card__ribbon">Most popular</span>}
+
+      <div className="pricing-card__art">
+        <img src={card.image} alt={`${card.name} card`} />
       </div>
 
-      {/* Card Image */}
-      <div className="card-image-section">
-        <div className="card-image-container">
-          <img src={card.image} alt={`${card.name} card`} className="card-image" />
-          {!isEligible && <div className="card-locked-overlay"></div>}
-        </div>
+      <div className="pricing-card__heading">
+        <span className="pricing-card__tagline">{card.tagline}</span>
+        <h3>{card.name}</h3>
+        <p>{card.description}</p>
       </div>
 
-      {/* Benefits */}
-      <div className="card-benefits">
-        <h4 className="benefits-title">Key Benefits</h4>
-        <div className="benefits-list">
-          {card.points.slice(0, 3).map((benefit, index) => (
-            <div key={index} className="benefit-item">
-              <span className="benefit-check">✓</span>
-              <span className="benefit-text">{benefit}</span>
-            </div>
-          ))}
-        </div>
+      <div className="pricing-card__requirement">
+        <span>Minimum balance</span>
+        <strong>${card.minBalance.toLocaleString()}</strong>
       </div>
 
-      {/* Actions */}
-      <div className="card-actions">
-        <button className="action-btn view-details" onClick={() => onViewMore(card)}>
-          <span className="material-symbols-outlined">visibility</span>
-          View Details
+      <ul className="pricing-card__features">
+        {card.points.map((point) => (
+          <li key={point}>
+            <span className="material-symbols-outlined">check_circle</span>
+            {point}
+          </li>
+        ))}
+      </ul>
+
+      <div className="pricing-card__actions">
+        <button className="pricing-card__ghost" onClick={() => onViewMore(card)}>
+          View details
         </button>
         <button
-          className={`action-btn apply-now ${isEligible ? 'enabled' : 'disabled'}`}
+          className="pricing-card__cta"
           onClick={() => onApply(card)}
           disabled={!isEligible}
         >
-          <span className="material-symbols-outlined">
-            {isEligible ? 'credit_card' : 'lock'}
-          </span>
-          {isEligible ? 'Apply Now' : 'Insufficient Balance'}
+          {isEligible ? (
+            <>Apply now <span className="material-symbols-outlined">arrow_forward</span></>
+          ) : (
+            <>Need ${(card.minBalance - userBalance).toLocaleString()} more</>
+          )}
         </button>
       </div>
     </div>
@@ -140,7 +126,7 @@ const CardsPage = () => {
     const fetchPortfolio = async () => {
       try {
         setLoading(true);
-        const headers = { 'Authorization': `Bearer ${token}` };
+        const headers = { Authorization: `Bearer ${token}` };
         const portfolioRes = await fetch(`${apiUrl}/portfolio`, { headers });
         if (!portfolioRes.ok) throw new Error('Failed to fetch portfolio data.');
         const portfolioData = await portfolioRes.json();
@@ -155,9 +141,7 @@ const CardsPage = () => {
     fetchPortfolio();
   }, [apiUrl, token]);
 
-  const handleViewMore = (card) => {
-    setSelectedCard(card);
-  };
+  const handleViewMore = (card) => setSelectedCard(card);
 
   const handleCloseModal = () => {
     setSelectedCard(null);
@@ -180,7 +164,7 @@ const CardsPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ cardStatus: cardTier.charAt(0).toUpperCase() + cardTier.slice(1) }),
       });
@@ -198,8 +182,7 @@ const CardsPage = () => {
       <div className="cards-page-container">
         <div className="cards-loading">
           <div className="loading-spinner-large"></div>
-          <h2>Loading Cards...</h2>
-          <p>Preparing your card options</p>
+          <p>Loading your card options\u2026</p>
         </div>
       </div>
     );
@@ -216,23 +199,18 @@ const CardsPage = () => {
         </div>
       )}
 
-      {/* Hero Section */}
-      <div className="cards-hero-section">
-        <div className="hero-content">
-          <div className="hero-icon-wrapper">
-            <span className="material-symbols-outlined hero-icon">credit_card</span>
-          </div>
-          <h1 className="hero-title">Premium Card Collection</h1>
-          <p className="hero-subtitle">
-            Unlock exclusive benefits and rewards with our premium card tiers. Choose the perfect card for your financial journey.
-          </p>
-        </div>
+      <div className="pricing-hero">
+        <span className="pricing-hero__eyebrow">Cards</span>
+        <h1>A card for every stage of your journey</h1>
+        <p>
+          Every tier is linked directly to your wallet balance — no separate top-ups, no hidden
+          fees. Pick the one that matches where you are today.
+        </p>
       </div>
 
-      {/* Cards Grid */}
-      <div className="cards-grid">
+      <div className="pricing-grid">
         {cardData.map((card) => (
-          <CardItem
+          <PricingCard
             key={card.name}
             card={card}
             portfolio={portfolio}
@@ -242,13 +220,8 @@ const CardsPage = () => {
         ))}
       </div>
 
-      {/* Modals */}
       {selectedCard && (
-        <CardDetailsModal
-          card={selectedCard}
-          onApply={handleApply}
-          onClose={handleCloseModal}
-        />
+        <CardDetailsModal card={selectedCard} onApply={handleApply} onClose={handleCloseModal} />
       )}
 
       {showBalanceModal && cardForBalanceCheck && (

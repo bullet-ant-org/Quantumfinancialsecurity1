@@ -388,3 +388,127 @@
   .rates-grid { grid-template-columns: 1fr; }
   .dash-header { flex-direction: column; align-items: flex-start; }
 }
+
+/* ATM Card widget */
+.atm-card-section {
+  margin-bottom: 1.5rem;
+}
+
+.atm-card {
+  position: relative;
+  max-width: 420px;
+  padding: 1.6rem 1.75rem;
+  border-radius: 20px;
+  overflow: hidden;
+  color: #3a2c0f;
+  background: linear-gradient(135deg, #fff6da 0%, #f3d47b 28%, #d8a63e 55%, #f8e6a8 78%, #c9932e 100%);
+  box-shadow: 0 18px 40px rgba(180, 140, 40, 0.28);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.atm-card.empty {
+  background: linear-gradient(135deg, #f1e7c9 0%, #e3d6ab 40%, #d9caa0 70%, #ecdfb8 100%);
+  color: #6b5d33;
+}
+
+.atm-card__shine {
+  position: absolute;
+  inset: -40% -20%;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.55) 48%, transparent 62%);
+  animation: atm-shine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes atm-shine {
+  0% { transform: translateX(-30%); }
+  50% { transform: translateX(30%); }
+  100% { transform: translateX(-30%); }
+}
+
+.atm-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.atm-card__brand {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.atm-card__chip {
+  font-size: 1.3rem;
+  opacity: 0.75;
+}
+
+.atm-card__chip-icon {
+  width: 42px;
+  height: 30px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(150, 110, 20, 0.5));
+  margin: 0.75rem 0 1.1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.atm-card__number {
+  font-family: 'Outfit', monospace;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  margin-bottom: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.atm-card__bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.atm-card__label {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+  margin-bottom: 0.2rem;
+}
+
+.atm-card__value {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.atm-card__cta {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(60, 45, 10, 0.85);
+  color: #fff6da;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.atm-card__cta .material-symbols-outlined {
+  font-size: 1rem;
+}

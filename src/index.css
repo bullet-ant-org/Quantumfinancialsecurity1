@@ -33,13 +33,10 @@
   --text-muted: #6c757d;
   --border-color: rgba(0, 0, 0, 0.1);
   --border-hover: rgba(0, 0, 0, 0.15);
-  --accent-primary: #007bff;
-  --accent-secondary: #6f42c1;
   --success-color: #28a745;
   --error-color: #dc3545;
   --warning-color: #ffc107;
   --shadow-color: rgba(0, 0, 0, 0.1);
-  --gradient-primary: linear-gradient(135deg, #007bff, #6f42c1);
   --backdrop-blur: blur(20px);
 }
 

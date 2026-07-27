@@ -10,19 +10,19 @@ export const useTheme = () => {
   return context;
 };
 
-// The site now ships with a single, permanent dark theme — there is no
+// The site now ships with a single, permanent light theme — there is no
 // user-facing switcher. This provider is kept (rather than removed outright)
 // so existing components that read `isDarkMode` keep working, but it always
-// resolves to dark and ignores any stale 'theme' value a browser may have
+// resolves to light and ignores any stale 'theme' value a browser may have
 // saved from an earlier version of the site.
 export const ThemeProvider = ({ children }) => {
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'light');
     localStorage.removeItem('theme');
   }, []);
 
   const value = {
-    isDarkMode: true,
+    isDarkMode: false,
     toggleTheme: () => {},
   };
 
