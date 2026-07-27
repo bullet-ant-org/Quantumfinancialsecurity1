@@ -7,6 +7,40 @@
   overflow-x: hidden;
 }
 
+/* Toast notification */
+.cards-toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  animation: cards-toast-in 0.3s ease both;
+}
+
+.cards-toast.success {
+  background: rgba(46, 230, 168, 0.14);
+  border: 1px solid rgba(46, 230, 168, 0.35);
+  color: #2ee6a8;
+}
+
+.cards-toast.error {
+  background: rgba(220, 53, 69, 0.14);
+  border: 1px solid rgba(220, 53, 69, 0.35);
+  color: #ff6b81;
+}
+
+@keyframes cards-toast-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Loading State */
 .cards-loading {
   display: flex;
@@ -68,7 +102,7 @@
 
 .hero-icon {
   font-size: 3.5rem;
-  color: var(--text-primary);
+  color: #061014;
 }
 
 .hero-title {

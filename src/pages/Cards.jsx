@@ -131,6 +131,7 @@ const CardsPage = () => {
   const [cardForBalanceCheck, setCardForBalanceCheck] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('token');
@@ -184,9 +185,11 @@ const CardsPage = () => {
         body: JSON.stringify({ cardStatus: cardTier.charAt(0).toUpperCase() + cardTier.slice(1) }),
       });
       if (!res.ok) throw new Error('Failed to apply for the card.');
-      alert(`Successfully applied for the ${cardTier} card!`);
+      setNotification({ type: 'success', message: `Application submitted for the ${cardTier} card!` });
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      setNotification({ type: 'error', message: err.message });
+    } finally {
+      setTimeout(() => setNotification(null), 4000);
     }
   };
 
@@ -204,6 +207,15 @@ const CardsPage = () => {
 
   return (
     <div className="cards-page-container">
+      {notification && (
+        <div className={`cards-toast ${notification.type}`}>
+          <span className="material-symbols-outlined">
+            {notification.type === 'success' ? 'check_circle' : 'error'}
+          </span>
+          {notification.message}
+        </div>
+      )}
+
       {/* Hero Section */}
       <div className="cards-hero-section">
         <div className="hero-content">
