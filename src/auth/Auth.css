@@ -286,12 +286,6 @@
   gap: 0.4rem;
 }
 
-.input-group label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
 .input-group input {
   padding: 0.9rem 1.1rem;
   border-radius: 14px;

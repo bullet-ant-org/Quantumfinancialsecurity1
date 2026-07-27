@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+const getInitials = (name) => {
+  if (!name) return 'U';
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('');
+};
+
 const DashboardNavbar = ({ toggleSidebar }) => {
   const [user, setUser] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -14,55 +24,49 @@ const DashboardNavbar = ({ toggleSidebar }) => {
   const userDropdownRef = useRef(null);
 
   useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem('user') || 'null');
+    if (localUser) setUser(localUser);
+
+    if (!token) return;
+
     const fetchUserData = async () => {
-      if (token) {
-        try {
-          const userRes = await fetch(`${apiUrl}/auth/me`, {
-            headers: { 'Authorization': `Bearer ${token}` },
-          });
-          if (userRes.ok) {
-            const userData = await userRes.json();
-            setUser(userData.user);
-            localStorage.setItem('user', JSON.stringify(userData.user));
-          } else {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-              setUser(JSON.parse(storedUser));
-            }
-          }
-        } catch (error) {
-          console.error('Failed to fetch user data', error);
-          const storedUser = localStorage.getItem('user');
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-          }
+      try {
+        const userRes = await fetch(`${apiUrl}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          setUser(userData.user);
+          localStorage.setItem('user', JSON.stringify(userData.user));
         }
+      } catch (error) {
+        console.error('Failed to fetch user data', error);
       }
     };
 
     const fetchNotificationsData = async () => {
-      if (token) {
-        try {
-          const countRes = await fetch(`${apiUrl}/notifications/unread-count`, {
-            headers: { 'Authorization': `Bearer ${token}` },
-          });
+      try {
+        const countRes = await fetch(`${apiUrl}/notifications/unread-count`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (countRes.ok) {
           const countData = await countRes.json();
-          if (countRes.ok) {
-            setUnreadCount(countData.count || 0);
-          }
-
-          const notifRes = await fetch(`${apiUrl}/notifications?limit=4`, {
-            headers: { 'Authorization': `Bearer ${token}` },
-          });
-          const notifData = await notifRes.json();
-          if (notifRes.ok) {
-            setNotifications(notifData.notifications || []);
-          }
-        } catch (error) {
-          console.error('Failed to fetch notifications data', error);
-          setUnreadCount(0);
-          setNotifications([]);
+          setUnreadCount(countData.count || 0);
         }
+      } catch (error) {
+        console.error('Failed to fetch unread count', error);
+      }
+
+      try {
+        const notifRes = await fetch(`${apiUrl}/notifications?limit=4`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (notifRes.ok) {
+          const notifData = await notifRes.json();
+          setNotifications(notifData.notifications || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch notifications', error);
       }
     };
 
@@ -90,24 +94,28 @@ const DashboardNavbar = ({ toggleSidebar }) => {
     navigate('/login');
   };
 
-  const isVerified = user?.stellarAddress || user?.rippleAddress;
+  const isVerified = Boolean(user?.stellarAddress || user?.rippleAddress);
+  const profilePath = user?.role === 'admin' ? '/admin/profile' : '/user/profile';
+  const notificationsPath = user?.role === 'admin' ? '/admin/notifications' : '/user/notifications';
+  const transactionsPath = user?.role === 'admin' ? '/admin/portfolios' : '/user/transactions';
 
   return (
     <nav className="dashboard-navbar">
       <div className="navbar-left">
-        <button className="sidebar-toggle-btn" onClick={toggleSidebar}>
+        <button className="sidebar-toggle-btn" onClick={toggleSidebar} aria-label="Toggle menu">
           <span className="material-symbols-outlined">menu</span>
         </button>
-      </div>
-
-      <div className="navbar-center">
-        <div className="account-status">
-          <span className="status-text">{isVerified ? 'Verified' : 'Unverified'}</span>
-          <div className={`status-circle ${isVerified ? 'verified' : 'unverified'}`}></div>
-        </div>
+        <span className="navbar-greeting">
+          Hi{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''} 👋
+        </span>
       </div>
 
       <div className="navbar-right">
+        <div className={`account-status ${isVerified ? 'verified' : 'unverified'}`}>
+          <span className="status-circle" />
+          {isVerified ? 'Verified' : 'Unverified'}
+        </div>
+
         <div className="notification-dropdown-container" ref={notificationDropdownRef}>
           <button
             className="notification-bell"
@@ -123,7 +131,7 @@ const DashboardNavbar = ({ toggleSidebar }) => {
               <div className="notification-header">
                 <h4>Notifications</h4>
                 <Link
-                  to={user?.role === 'admin' ? '/admin/notifications' : '/user/notifications'}
+                  to={notificationsPath}
                   className="view-all-link"
                   onClick={() => setShowNotificationDropdown(false)}
                 >
@@ -170,27 +178,26 @@ const DashboardNavbar = ({ toggleSidebar }) => {
 
         <div className="user-dropdown-container" ref={userDropdownRef}>
           <button
-            className="user-dropdown-btn"
+            className="user-chip"
             onClick={() => setShowUserDropdown(!showUserDropdown)}
             title="Account menu"
           >
-            <span className="material-symbols-outlined">account_circle</span>
+            <span className="user-chip__avatar">{getInitials(user?.fullName || user?.username)}</span>
+            <span className="user-chip__info">
+              <span className="user-chip__name">{user?.username || 'Account'}</span>
+              <span className="user-chip__role">{user?.role === 'admin' ? 'Administrator' : 'Member'}</span>
+            </span>
+            <span className="material-symbols-outlined user-chip__chevron">expand_more</span>
           </button>
 
           {showUserDropdown && (
             <div className="user-dropdown-menu">
-              <Link
-                to={user?.role === 'admin' ? '/admin/profile' : '/user/profile'}
-                className="dropdown-item"
-                onClick={() => setShowUserDropdown(false)}
-              >
+              <Link to={profilePath} className="dropdown-item" onClick={() => setShowUserDropdown(false)}>
+                <span className="material-symbols-outlined">person</span>
                 Profile
               </Link>
-              <Link
-                to={user?.role === 'admin' ? '/admin/portfolios' : '/user/transactions'}
-                className="dropdown-item"
-                onClick={() => setShowUserDropdown(false)}
-              >
+              <Link to={transactionsPath} className="dropdown-item" onClick={() => setShowUserDropdown(false)}>
+                <span className="material-symbols-outlined">swap_vert</span>
                 Transactions
               </Link>
               <div className="dropdown-divider"></div>
@@ -201,6 +208,7 @@ const DashboardNavbar = ({ toggleSidebar }) => {
                   setShowUserDropdown(false);
                 }}
               >
+                <span className="material-symbols-outlined">logout</span>
                 Log Out
               </button>
             </div>

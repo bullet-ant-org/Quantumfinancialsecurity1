@@ -201,6 +201,7 @@
   }
   .site-nav__toggler {
     display: inline-flex;
+    margin-left: auto;
   }
 }
 

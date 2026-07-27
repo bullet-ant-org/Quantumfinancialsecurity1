@@ -158,7 +158,7 @@ const Portfolio = () => {
 
   return (
     <section id="portfolio" className="portfolio-section">
-      <div className="container text-white">
+      <div className="container">
         <h2 className="text-center mb-5">Our Portfolio & Reach</h2>
         {stats && (
           <div className="row text-center mb-5 stat-counters">

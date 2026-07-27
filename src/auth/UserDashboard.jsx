@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Doughnut } from 'react-chartjs-2';
 import './UserDashboard.css';
 import {
@@ -125,6 +126,29 @@ const UserDashboard = () => {
           <span className="verify-pill__dot" />
           {isVerified ? 'Wallet verified' : 'Wallet not connected'}
         </div>
+      </div>
+
+      <div className="quick-actions">
+        <Link to="/user/send" className="quick-action">
+          <span className="material-symbols-outlined">send</span>
+          Send
+        </Link>
+        <Link to="/user/request" className="quick-action">
+          <span className="material-symbols-outlined">call_received</span>
+          Request
+        </Link>
+        <Link to="/user/connect-wallet" className="quick-action">
+          <span className="material-symbols-outlined">account_balance_wallet</span>
+          Connect wallet
+        </Link>
+        <Link to="/user/cards" className="quick-action">
+          <span className="material-symbols-outlined">credit_card</span>
+          Cards
+        </Link>
+        <Link to="/user/create-ticket" className="quick-action">
+          <span className="material-symbols-outlined">note_add</span>
+          Get support
+        </Link>
       </div>
 
       <div className="dash-grid">

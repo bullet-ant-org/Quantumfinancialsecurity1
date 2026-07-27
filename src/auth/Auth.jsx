@@ -274,25 +274,23 @@ const Auth = () => {
                 {mode === 'signup' && current.key === 'name' && (
                   <>
                     <div className="input-group">
-                      <label htmlFor="fullName">Full name</label>
                       <input
                         id="fullName"
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Jordan Rivera"
+                        placeholder="Full name"
                         autoFocus
                         required
                       />
                     </div>
                     <div className="input-group">
-                      <label htmlFor="username">Username</label>
                       <input
                         id="username"
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder="jordan.rivera"
+                        placeholder="Username"
                         required
                       />
                       <span className="input-hint">This is how you'll appear across the platform.</span>
@@ -302,13 +300,12 @@ const Auth = () => {
 
                 {current.key === 'email' && (
                   <div className="input-group">
-                    <label htmlFor="email">Email address</label>
                     <input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
+                      placeholder="Email address"
                       autoFocus
                       required
                     />
@@ -326,14 +323,13 @@ const Auth = () => {
                       <button type="button" onClick={goBack}>Change</button>
                     </div>
                     <div className="input-group">
-                      <label htmlFor="password">Password</label>
                       <div className="input-with-action">
                         <input
                           id="password"
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          placeholder="Enter your password"
+                          placeholder="Password"
                           autoFocus
                           required
                         />
@@ -350,14 +346,13 @@ const Auth = () => {
                 {mode === 'signup' && current.key === 'password' && (
                   <>
                     <div className="input-group">
-                      <label htmlFor="password">Password</label>
                       <div className="input-with-action">
                         <input
                           id="password"
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          placeholder="At least 8 characters"
+                          placeholder="Password"
                           autoFocus
                           required
                         />
@@ -367,6 +362,9 @@ const Auth = () => {
                           </span>
                         </button>
                       </div>
+                      {!password && (
+                        <span className="input-hint">Use at least 8 characters.</span>
+                      )}
                       {password && (
                         <div className="password-strength">
                           <div className="password-strength__track">
@@ -380,13 +378,12 @@ const Auth = () => {
                       )}
                     </div>
                     <div className="input-group">
-                      <label htmlFor="confirmPassword">Confirm password</label>
                       <input
                         id="confirmPassword"
                         type={showPassword ? 'text' : 'password'}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Re-enter your password"
+                        placeholder="Confirm password"
                         required
                       />
                     </div>

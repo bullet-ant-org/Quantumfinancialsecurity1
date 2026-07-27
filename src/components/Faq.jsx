@@ -1,16 +1,35 @@
 import React, { useState } from 'react';
 import './Faq.css';
 
-const Faq = () => {
-  const [openFaq, setOpenFaq] = useState(null);
+const FAQ_DATA = [
+  {
+    q: 'Do you ever hold my private keys?',
+    a: 'No. QuantumFS is non-custodial — your wallet is generated and secured on your own device. We never store, transmit, or have access to your recovery phrase or private keys.',
+  },
+  {
+    q: 'Which assets can I manage on the platform?',
+    a: 'You can hold, send, and receive Bitcoin, Stellar (XLM), Ripple (XRP), and stablecoins like USDT, all from a single portfolio dashboard.',
+  },
+  {
+    q: 'How do I get started?',
+    a: 'Create an account, then either import an existing wallet with your recovery phrase or generate a new one in a single step. Your portfolio and dashboard are ready immediately after.',
+  },
+  {
+    q: 'What happens if I lose access to my account?',
+    a: 'Open a support ticket from the dashboard and a specialist will verify your identity and help restore access. Because we never hold your keys, recovery always depends on your own backup of your recovery phrase.',
+  },
+  {
+    q: 'Can I dispute a transaction?',
+    a: 'Yes. Every transaction can be flagged for review from your transaction history, and you can attach evidence and track the resolution status directly in your dashboard.',
+  },
+  {
+    q: 'Is there a spending card linked to my wallet?',
+    a: 'Yes, once your account is verified you can apply for a Bronze, Silver, or Gold card tied directly to your wallet balance for everyday spending.',
+  },
+];
 
-  const faqData = [
-    { q: 'What is the Quantum Financial System (QFS)?', a: 'The QFS is a theoretical financial framework, often described in esoteric and conspiracy theory communities, that is said to be backed by gold and other assets, replacing the current central banking system.' },
-    { q: 'How can I enroll in the QFS?', a: 'Enrollment processes are typically outlined by community leaders. It usually involves registering your assets and personal information on a designated platform to be included in the new system.' },
-    { q: 'Is my data secure on this platform?', a: 'We use state-of-the-art quantum encryption and decentralized storage to ensure the highest level of security for your personal and financial data.' },
-    { q: 'What assets can be managed here?', a: 'Our platform supports a wide range of digital and tokenized assets, including major cryptocurrencies like Bitcoin and Ethereum, as well as tokenized real-world assets.' },
-    { q: 'How are humanitarian projects funded?', a: 'A portion of the platform\'s revenue and newly generated assets within the QFS are allocated to fund various humanitarian and infrastructure projects worldwide.' },
-  ];
+const Faq = () => {
+  const [openFaq, setOpenFaq] = useState(0);
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -19,10 +38,25 @@ const Faq = () => {
   return (
     <section id="faq" className="faq-section">
       <div className="container">
-        <h2 className="text-center mb-5 text-white">Frequently Asked Questions</h2>
+        <div className="section-heading">
+          <span className="section-eyebrow">Support</span>
+          <h2>Frequently asked questions</h2>
+          <p>Still curious about something? Open a ticket from your dashboard any time.</p>
+        </div>
+
         <div className="accordion">
-          {faqData.map((faq, index) => (
-            <div className="accordion-item" key={index}><div className="accordion-header" onClick={() => toggleFaq(index)}><h3>{faq.q}</h3><span className={`accordion-icon ${openFaq === index ? 'open' : ''}`}></span></div><div className={`accordion-content ${openFaq === index ? 'open' : ''}`}><p>{faq.a}</p></div></div>
+          {FAQ_DATA.map((faq, index) => (
+            <div className={`accordion-item ${openFaq === index ? 'open' : ''}`} key={faq.q}>
+              <button className="accordion-header" onClick={() => toggleFaq(index)}>
+                <h3>{faq.q}</h3>
+                <span className={`accordion-icon ${openFaq === index ? 'open' : ''}`}>
+                  <span className="material-symbols-outlined">expand_more</span>
+                </span>
+              </button>
+              <div className={`accordion-content ${openFaq === index ? 'open' : ''}`}>
+                <p>{faq.a}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>

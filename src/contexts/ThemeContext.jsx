@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
@@ -10,31 +10,20 @@ export const useTheme = () => {
   return context;
 };
 
+// The site now ships with a single, permanent dark theme — there is no
+// user-facing switcher. This provider is kept (rather than removed outright)
+// so existing components that read `isDarkMode` keep working, but it always
+// resolves to dark and ignores any stale 'theme' value a browser may have
+// saved from an earlier version of the site.
 export const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check localStorage for saved theme preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    // Default to dark mode
-    return true;
-  });
-
   useEffect(() => {
-    // Apply theme to document root
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-    // Save to localStorage
-    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
-
-  const toggleTheme = () => {
-    setIsDarkMode(prev => !prev);
-  };
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.removeItem('theme');
+  }, []);
 
   const value = {
-    isDarkMode,
-    toggleTheme,
+    isDarkMode: true,
+    toggleTheme: () => {},
   };
 
   return (

@@ -8,7 +8,7 @@ const Footer = () => {
     <>
       <section className="deneb_cta" id="cta">
         <div className="container">
-          <div className="cta_wrapper" style={{ backgroundImage: "url(http://demo.tortoizthemes.com/deneb-html/deneb-ltr/assets/images/cta_bg.png)" }}>
+          <div className="cta_wrapper">
             <div className="row align-items-center justify-content-center">
               <div className="col-md-10">
                 <div className="cta_content text-center">
