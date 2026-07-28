@@ -1,18 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import logo from '../assets/qfs.png';
 import './Auth.css';
 
 const LOGIN_STEPS = [
-  { key: 'email', title: 'Sign in', desc: 'Use your Quantum Financial Security account.' },
-  { key: 'password', title: 'Welcome back', desc: 'Enter your password to continue.' },
+  { key: 'email', title: 'Welcome back', desc: 'Enter the email linked to your vault to continue.' },
+  { key: 'password', title: 'Enter your password', desc: 'For your security, confirm your password to unlock your dashboard.' },
 ];
 
 const SIGNUP_STEPS = [
-  { key: 'name', title: 'Create your account', desc: 'Tell us your name and pick a username.' },
-  { key: 'email', title: 'Add your email', desc: "We'll use this to secure your account and send alerts." },
-  { key: 'password', title: 'Create a password', desc: 'Use at least 8 characters with a mix of letters and numbers.' },
-  { key: 'review', title: 'Review your details', desc: 'Make sure everything looks right before you continue.' },
+  { key: 'name', title: "Let's get acquainted", desc: 'Tell us your name and pick a username for your vault.' },
+  { key: 'email', title: 'Where should we reach you', desc: "We'll use this email to secure your account and send important alerts." },
+  { key: 'password', title: 'Lock it down', desc: 'Choose a strong password — this is the only key to your vault.' },
+  { key: 'review', title: 'Review & confirm', desc: 'Double-check your details before we create your account.' },
 ];
 
 const getPasswordStrength = (password) => {
@@ -24,20 +23,20 @@ const getPasswordStrength = (password) => {
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
   const levels = [
-    { label: 'Very weak', color: '#d93025' },
-    { label: 'Weak', color: '#ea8600' },
-    { label: 'Fair', color: '#f9ab00' },
-    { label: 'Good', color: '#1e8e3e' },
-    { label: 'Strong', color: '#1a73e8' },
-    { label: 'Excellent', color: '#1a73e8' },
+    { label: 'Very weak', color: '#dc3545' },
+    { label: 'Weak', color: '#e2673a' },
+    { label: 'Fair', color: '#ffc107' },
+    { label: 'Good', color: '#2ee6a8' },
+    { label: 'Strong', color: '#00e1ff' },
+    { label: 'Excellent', color: '#00e1ff' },
   ];
   return { score, ...levels[Math.min(score, levels.length - 1)] };
 };
 
 const Auth = () => {
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [step, setStep] = useState(0);
-  const [phase, setPhase] = useState('form');
+  const [phase, setPhase] = useState('form'); // 'form' | 'processing' | 'success'
 
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
@@ -148,7 +147,7 @@ const Auth = () => {
       setPhase('success');
       setTimeout(() => {
         navigate(data.user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard');
-      }, 1000);
+      }, 1400);
     } catch (err) {
       setPhase('form');
       setError('Could not reach the server. Please try again.');
@@ -157,7 +156,7 @@ const Auth = () => {
 
   const runRegister = async () => {
     setPhase('processing');
-    setStatusText('Creating your account\u2026');
+    setStatusText('Encrypting your vault\u2026');
     try {
       const response = await fetch(`${apiUrl}/auth/register`, {
         method: 'POST',
@@ -172,12 +171,12 @@ const Auth = () => {
         return;
       }
 
-      setStatusText('Account created');
+      setStatusText('Vault created');
       setPhase('success');
       setTimeout(() => {
         switchMode('login');
         setStatusText('');
-      }, 1200);
+      }, 1600);
     } catch (err) {
       setPhase('form');
       setError('Could not reach the server. Please try again.');
@@ -208,200 +207,265 @@ const Auth = () => {
   };
 
   return (
-    <div className="gauth-page">
-      <div className="gauth-card">
-        {phase !== 'form' && (
-          <div className="gauth-overlay">
-            {phase === 'processing' && <div className="gauth-spinner" />}
-            {phase === 'success' && <span className="material-symbols-outlined gauth-check">check_circle</span>}
-            <p>{statusText}</p>
+    <div className="auth-page">
+      <Link to="/" className="back-button">
+        <span className="material-symbols-outlined">arrow_back</span>
+        Back to Home
+      </Link>
+
+      <div className="auth-shell">
+        <aside className="auth-visual">
+          <div className="auth-visual__orb auth-visual__orb--one" />
+          <div className="auth-visual__orb auth-visual__orb--two" />
+          <div className="auth-visual__content">
+            <span className="auth-visual__badge">
+              <span className="material-symbols-outlined">shield_lock</span>
+              Quantum Financial Security
+            </span>
+            <h2>Every session is a vault.</h2>
+            <p>
+              Your credentials never leave an encrypted channel, and your keys
+              never leave your device. This is what custody should feel like.
+            </p>
+            <ul className="auth-visual__list">
+              <li><span className="material-symbols-outlined">check_circle</span> Non-custodial by design</li>
+              <li><span className="material-symbols-outlined">check_circle</span> Real-time balance sync</li>
+              <li><span className="material-symbols-outlined">check_circle</span> 24/7 human support</li>
+            </ul>
           </div>
-        )}
+        </aside>
 
-        <div className="gauth-brand">
-          <img src={logo} alt="QuantumFS" />
-        </div>
-
-        <div className="gauth-progress">
-          {steps.map((s, i) => (
-            <span key={s.key} className={`gauth-progress__dot ${i <= step ? 'done' : ''}`} />
-          ))}
-        </div>
-
-        <h1 className="gauth-title">{current.title}</h1>
-        <p className="gauth-subtitle">{current.desc}</p>
-
-        <form onSubmit={handleSubmit} className="gauth-form" autoComplete="off">
-          {mode === 'signup' && current.key === 'name' && (
-            <>
-              <div className="gauth-field">
-                <label htmlFor="fullName">Full name</label>
-                <input
-                  id="fullName"
-                  type="text"
-                  autoComplete="off"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Jordan Rivera"
-                  autoFocus
-                  required
-                />
-              </div>
-              <div className="gauth-field">
-                <label htmlFor="username">Username</label>
-                <input
-                  id="username"
-                  type="text"
-                  autoComplete="off"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="jordan.rivera"
-                  required
-                />
-              </div>
-            </>
-          )}
-
-          {current.key === 'email' && (
-            <div className="gauth-field">
-              <label htmlFor="email">Email address</label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="off"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                autoFocus
-                required
-              />
-            </div>
-          )}
-
-          {mode === 'login' && current.key === 'password' && (
-            <>
-              <div className="gauth-identity-chip">
-                <span className="material-symbols-outlined">mail</span>
-                {email}
-                <button type="button" onClick={goBack}>Change</button>
-              </div>
-              <div className="gauth-field">
-                <label htmlFor="password">Password</label>
-                <div className="gauth-field__input-row">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="off"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    autoFocus
-                    required
-                  />
-                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="gauth-field__toggle">
-                    <span className="material-symbols-outlined">
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {mode === 'signup' && current.key === 'password' && (
-            <>
-              <div className="gauth-field">
-                <label htmlFor="password">Password</label>
-                <div className="gauth-field__input-row">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="off"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="At least 8 characters"
-                    autoFocus
-                    required
-                  />
-                  <button type="button" onClick={() => setShowPassword((v) => !v)} className="gauth-field__toggle">
-                    <span className="material-symbols-outlined">
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
-                  </button>
-                </div>
-                {password && (
-                  <div className="gauth-strength">
-                    <div className="gauth-strength__track">
-                      <div
-                        className="gauth-strength__fill"
-                        style={{ width: `${(strength.score / 5) * 100}%`, background: strength.color }}
-                      />
-                    </div>
-                    <span style={{ color: strength.color }}>{strength.label}</span>
-                  </div>
-                )}
-              </div>
-              <div className="gauth-field">
-                <label htmlFor="confirmPassword">Confirm password</label>
-                <input
-                  id="confirmPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="off"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter your password"
-                  required
-                />
-              </div>
-            </>
-          )}
-
-          {mode === 'signup' && current.key === 'review' && (
-            <>
-              <div className="gauth-review">
-                <div className="gauth-review__row">
-                  <span>Full name</span>
-                  <strong>{fullName}</strong>
-                </div>
-                <div className="gauth-review__row">
-                  <span>Username</span>
-                  <strong>{username}</strong>
-                </div>
-                <div className="gauth-review__row">
-                  <span>Email</span>
-                  <strong>{email}</strong>
-                </div>
-              </div>
-              <label className="gauth-agree">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                />
-                <span>I agree to the Terms of Service and Privacy Policy.</span>
-              </label>
-            </>
-          )}
-
-          {error && <div className="gauth-error">{error}</div>}
-
-          <div className="gauth-actions">
-            {mode === 'signup' && step === 0 ? (
-              <Link to="/" className="gauth-btn gauth-btn--text">Cancel</Link>
-            ) : step > 0 ? (
-              <button type="button" className="gauth-btn gauth-btn--text" onClick={goBack}>Back</button>
-            ) : (
-              <button type="button" className="gauth-btn gauth-btn--text" onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}>
-                {mode === 'login' ? 'Create account' : 'Sign in instead'}
-              </button>
-            )}
-            <button type="submit" className="gauth-btn gauth-btn--primary">
-              {current.key === 'review' ? 'Create account'
-                : mode === 'login' && current.key === 'password' ? 'Sign in'
-                : 'Next'}
+        <div className="auth-panel">
+          <div className="auth-mode-switch">
+            <button
+              className={mode === 'login' ? 'active' : ''}
+              onClick={() => switchMode('login')}
+              type="button"
+            >
+              Sign in
+            </button>
+            <button
+              className={mode === 'signup' ? 'active' : ''}
+              onClick={() => switchMode('signup')}
+              type="button"
+            >
+              Create account
             </button>
           </div>
-        </form>
+
+          <div className="auth-progress">
+            {steps.map((s, i) => (
+              <div className={`auth-progress__step ${i <= step ? 'done' : ''} ${i === step ? 'current' : ''}`} key={s.key}>
+                <span className="auth-progress__dot">
+                  {i < step ? <span className="material-symbols-outlined">check</span> : i + 1}
+                </span>
+                {i !== steps.length - 1 && <span className="auth-progress__line" />}
+              </div>
+            ))}
+          </div>
+
+          <div className="auth-card">
+            <div className="auth-step" key={`${mode}-${step}`}>
+              <p className="auth-step__eyebrow">Step {step + 1} of {steps.length}</p>
+              <h1 className="auth-title">{current.title}</h1>
+              <p className="auth-subtitle">{current.desc}</p>
+
+              <form onSubmit={handleSubmit} className="auth-form">
+                {mode === 'signup' && current.key === 'name' && (
+                  <>
+                    <div className="input-group">
+                      <input
+                        id="fullName"
+                        autoComplete="off"
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Full name"
+                        autoFocus
+                        required
+                      />
+                    </div>
+                    <div className="input-group">
+                      <input
+                        id="username"
+                        autoComplete="off"
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                        required
+                      />
+                      <span className="input-hint">This is how you'll appear across the platform.</span>
+                    </div>
+                  </>
+                )}
+
+                {current.key === 'email' && (
+                  <div className="input-group">
+                    <input
+                      id="email"
+                        autoComplete="off"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email address"
+                      autoFocus
+                      required
+                    />
+                    {mode === 'login' && (
+                      <span className="input-hint">We'll ask for your password next.</span>
+                    )}
+                  </div>
+                )}
+
+                {mode === 'login' && current.key === 'password' && (
+                  <>
+                    <div className="auth-identity-chip">
+                      <span className="material-symbols-outlined">mail</span>
+                      {email}
+                      <button type="button" onClick={goBack}>Change</button>
+                    </div>
+                    <div className="input-group">
+                      <div className="input-with-action">
+                        <input
+                          id="password"
+                        autoComplete="off"
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Password"
+                          autoFocus
+                          required
+                        />
+                        <button type="button" onClick={() => setShowPassword((v) => !v)} className="input-action">
+                          <span className="material-symbols-outlined">
+                            {showPassword ? 'visibility_off' : 'visibility'}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {mode === 'signup' && current.key === 'password' && (
+                  <>
+                    <div className="input-group">
+                      <div className="input-with-action">
+                        <input
+                          id="password"
+                        autoComplete="off"
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Password"
+                          autoFocus
+                          required
+                        />
+                        <button type="button" onClick={() => setShowPassword((v) => !v)} className="input-action">
+                          <span className="material-symbols-outlined">
+                            {showPassword ? 'visibility_off' : 'visibility'}
+                          </span>
+                        </button>
+                      </div>
+                      {!password && (
+                        <span className="input-hint">Use at least 8 characters.</span>
+                      )}
+                      {password && (
+                        <div className="password-strength">
+                          <div className="password-strength__track">
+                            <div
+                              className="password-strength__fill"
+                              style={{ width: `${(strength.score / 5) * 100}%`, background: strength.color }}
+                            />
+                          </div>
+                          <span style={{ color: strength.color }}>{strength.label}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="input-group">
+                      <input
+                        id="confirmPassword"
+                        autoComplete="off"
+                        type={showPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm password"
+                        required
+                      />
+                    </div>
+                  </>
+                )}
+
+                {mode === 'signup' && current.key === 'review' && (
+                  <>
+                    <div className="review-list">
+                      <div className="review-row">
+                        <span>Full name</span>
+                        <strong>{fullName}</strong>
+                      </div>
+                      <div className="review-row">
+                        <span>Username</span>
+                        <strong>{username}</strong>
+                      </div>
+                      <div className="review-row">
+                        <span>Email</span>
+                        <strong>{email}</strong>
+                      </div>
+                      <div className="review-row">
+                        <span>Password</span>
+                        <strong>{'•'.repeat(Math.min(password.length, 12))}</strong>
+                      </div>
+                    </div>
+                    <label className="agree-check">
+                      <input
+                        type="checkbox"
+                        checked={agreed}
+                        onChange={(e) => setAgreed(e.target.checked)}
+                      />
+                      <span>I agree to the Terms of Service and Privacy Policy.</span>
+                    </label>
+                  </>
+                )}
+
+                {error && <div className="auth-message error">{error}</div>}
+
+                <div className="auth-actions">
+                  {step > 0 && (
+                    <button type="button" className="auth-button auth-button--ghost" onClick={goBack}>
+                      Back
+                    </button>
+                  )}
+                  <button type="submit" className="auth-button">
+                    {current.key === 'review' ? 'Create account'
+                      : mode === 'login' && current.key === 'password' ? 'Sign in'
+                      : 'Continue'}
+                    <span className="material-symbols-outlined">arrow_forward</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {phase !== 'form' && (
+              <div className="auth-overlay">
+                <div className="auth-overlay__content">
+                  {phase === 'processing' && <div className="auth-overlay__spinner" />}
+                  {phase === 'success' && (
+                    <span className="auth-overlay__check material-symbols-outlined">check_circle</span>
+                  )}
+                  <p>{statusText}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="auth-footer">
+            {mode === 'login' ? (
+              <p>Don't have an account? <button type="button" onClick={() => switchMode('signup')} className="auth-link">Create one</button></p>
+            ) : (
+              <p>Already have an account? <button type="button" onClick={() => switchMode('login')} className="auth-link">Sign in</button></p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
