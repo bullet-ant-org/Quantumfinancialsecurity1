@@ -28,15 +28,15 @@ const ProfileUpdateForm = ({ user, onUpdate, loading }) => {
     <form onSubmit={handleSubmit} className="profile-form">
       <h3>Edit information</h3>
       <div className="input-group">
-        <input id="fullName" type="text" name="fullName" value={formData.fullName || ''} onChange={handleChange} placeholder=" " required />
+        <input id="fullName" type="text" name="fullName" autoComplete="off" value={formData.fullName || ''} onChange={handleChange} placeholder=" " required />
         <label htmlFor="fullName">Full name</label>
       </div>
       <div className="input-group">
-        <input id="username" type="text" name="username" value={formData.username} onChange={handleChange} placeholder=" " required />
+        <input id="username" type="text" name="username" autoComplete="off" value={formData.username} onChange={handleChange} placeholder=" " required />
         <label htmlFor="username">Username</label>
       </div>
       <div className="input-group">
-        <input id="email" type="email" name="email" value={formData.email} placeholder=" " disabled />
+        <input id="email" type="email" name="email" autoComplete="off" value={formData.email} placeholder=" " disabled />
         <label htmlFor="email">Email</label>
       </div>
       <button type="submit" className="profile-button" disabled={loading}>
@@ -68,15 +68,15 @@ const PasswordUpdateForm = ({ onUpdate, loading }) => {
     <form onSubmit={handleSubmit} className="profile-form">
       <h3>Change password</h3>
       <div className="input-group">
-        <input id="currentPassword" type="password" name="currentPassword" value={passwordData.currentPassword} onChange={handleChange} placeholder=" " required />
+        <input id="currentPassword" type="password" name="currentPassword" autoComplete="off" value={passwordData.currentPassword} onChange={handleChange} placeholder=" " required />
         <label htmlFor="currentPassword">Current password</label>
       </div>
       <div className="input-group">
-        <input id="newPassword" type="password" name="newPassword" value={passwordData.newPassword} onChange={handleChange} placeholder=" " required />
+        <input id="newPassword" type="password" name="newPassword" autoComplete="off" value={passwordData.newPassword} onChange={handleChange} placeholder=" " required />
         <label htmlFor="newPassword">New password</label>
       </div>
       <div className="input-group">
-        <input id="confirmNewPassword" type="password" name="confirmNewPassword" value={passwordData.confirmNewPassword} onChange={handleChange} placeholder=" " required />
+        <input id="confirmNewPassword" type="password" name="confirmNewPassword" autoComplete="off" value={passwordData.confirmNewPassword} onChange={handleChange} placeholder=" " required />
         <label htmlFor="confirmNewPassword">Confirm new password</label>
       </div>
       <button type="submit" className="profile-button" disabled={loading}>

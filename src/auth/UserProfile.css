@@ -277,6 +277,8 @@
   font-size: 0.95rem;
   pointer-events: none;
   transition: all 0.18s ease;
+  background: transparent;
+  -webkit-text-fill-color: currentColor;
 }
 
 .profile-form .input-group input:focus + label,
