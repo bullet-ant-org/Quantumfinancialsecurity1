@@ -6,41 +6,41 @@
 
 .cta_wrapper {
   position: relative;
-  background: var(--gradient-primary);
-  color: #061014;
-  padding: 3.2rem 2.5rem;
-  border-radius: 24px;
-  margin-top: -100px;
-  box-shadow: 0 20px 50px rgba(0, 225, 255, 0.18);
+  background: var(--text-primary);
+  color: #fff;
+  padding: 3.5rem 2.5rem;
+  border-radius: 20px;
+  margin-top: -90px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
 }
 
 .cta_content h3 {
   font-family: 'Outfit', sans-serif;
-  font-weight: 800;
-  font-size: 2.3rem;
+  font-weight: 700;
+  font-size: 2.1rem;
   margin-bottom: 1rem;
+  letter-spacing: -0.01em;
 }
 
 .cta_content p {
-  color: rgba(6, 16, 20, 0.75);
-  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.02rem;
   margin-bottom: 2rem;
 }
 
 .cta_wrapper .btn-primary {
-  background-color: #061014;
-  border-color: #061014;
-  color: #fff;
+  background-color: #fff;
+  border-color: #fff;
+  color: var(--text-primary);
   padding: 0.75rem 1.9rem;
   font-weight: 600;
-  border-radius: 999px;
-  transition: all 0.25s ease;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .cta_wrapper .btn-primary:hover {
-  background-color: #0a1b21;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 /* Footer Section */

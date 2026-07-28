@@ -1,16 +1,17 @@
 .security-section {
-  padding: 6rem 0;
+  padding: 6.5rem 0;
+  background: #fff;
 }
 
 .security-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3.5rem;
+  gap: 4rem;
   align-items: center;
 }
 
 .security-image {
-  border-radius: 22px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border-color);
   aspect-ratio: 4 / 3;
@@ -26,7 +27,7 @@
 .security-copy h2 {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
   color: var(--text-primary);
   margin-bottom: 1rem;
   letter-spacing: -0.01em;
@@ -51,11 +52,12 @@
   margin-bottom: 1.1rem;
   color: var(--text-secondary);
   line-height: 1.55;
+  font-size: 0.94rem;
 }
 
 .security-points .material-symbols-outlined {
-  color: var(--accent-primary);
-  font-size: 1.3rem;
+  color: var(--text-primary);
+  font-size: 1.2rem;
   flex-shrink: 0;
   margin-top: 0.1rem;
 }
@@ -67,8 +69,9 @@
   color: var(--text-primary);
   font-weight: 600;
   text-decoration: none;
-  border-bottom: 1px solid var(--border-hover);
+  border-bottom: 1px solid var(--text-primary);
   padding-bottom: 2px;
+  font-size: 0.92rem;
 }
 
 .security-link .material-symbols-outlined {

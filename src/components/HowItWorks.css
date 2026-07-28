@@ -1,71 +1,71 @@
 .how-section {
-  padding: 6rem 0;
-  background: var(--bg-secondary);
+  padding: 6.5rem 0;
+  background: var(--bg-tertiary);
 }
 
 .how-steps {
-  display: flex;
-  flex-direction: column;
-  max-width: 720px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
 .how-step {
   display: flex;
-  gap: 1.75rem;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.75rem 1.5rem;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
 }
 
 .how-step__marker {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  flex-shrink: 0;
+  gap: 0.6rem;
 }
 
 .how-step__marker span {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
-  color: var(--accent-primary);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--text-primary);
+  color: #fff;
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
 .how-step__line {
-  width: 1px;
-  flex: 1;
-  min-height: 2.5rem;
-  background: linear-gradient(var(--border-hover), transparent);
-  margin: 0.5rem 0;
-}
-
-.how-step__body {
-  padding-bottom: 2.75rem;
+  display: none;
 }
 
 .how-step__body h3 {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.02rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .how-step__body p {
   color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 480px;
+  line-height: 1.55;
+  font-size: 0.88rem;
   margin: 0;
 }
 
+@media (max-width: 900px) {
+  .how-steps { grid-template-columns: 1fr 1fr; }
+}
+
 @media (max-width: 576px) {
-  .how-section { padding: 4rem 0; }
-  .how-step { gap: 1.1rem; }
-  .how-step__marker span { width: 42px; height: 42px; font-size: 0.85rem; }
+  .how-section { padding: 4.5rem 0; }
+  .how-steps { grid-template-columns: 1fr; }
 }

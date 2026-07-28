@@ -1,23 +1,23 @@
 .section-eyebrow {
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent-primary);
+  color: var(--text-muted);
   margin-bottom: 0.9rem;
 }
 
 .section-heading {
-  max-width: 620px;
-  margin: 0 auto 3.25rem;
+  max-width: 600px;
+  margin: 0 auto 3.5rem;
   text-align: center;
 }
 
 .section-heading h2 {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
   letter-spacing: -0.01em;
   color: var(--text-primary);
   margin-bottom: 0.9rem;
@@ -25,33 +25,34 @@
 
 .section-heading p {
   color: var(--text-secondary);
-  font-size: 1.02rem;
+  font-size: 1rem;
   line-height: 1.6;
 }
 
 .features-section {
-  padding: 6rem 0;
+  padding: 6.5rem 0;
+  background: #fff;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  gap: 1px;
+  background: var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .feature-card {
   grid-column: span 1;
-  padding: 2rem;
-  border-radius: 18px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  padding: 2.25rem;
+  background: #fff;
+  transition: background 0.2s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-hover);
-  background: var(--bg-card-hover);
+  background: var(--bg-tertiary);
 }
 
 .feature-card--wide {
@@ -62,18 +63,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--gradient-primary);
-  color: #061014;
-  font-size: 1.4rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 1.25rem;
   margin-bottom: 1.25rem;
 }
 
 .feature-card h3 {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 0.6rem;
@@ -81,7 +82,7 @@
 
 .feature-card p {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   line-height: 1.6;
   margin: 0;
 }
@@ -92,7 +93,7 @@
 }
 
 @media (max-width: 600px) {
-  .features-section { padding: 4rem 0; }
+  .features-section { padding: 4.5rem 0; }
   .features-grid { grid-template-columns: 1fr; }
   .feature-card--wide { grid-column: span 1; }
 }
