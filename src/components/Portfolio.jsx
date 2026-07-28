@@ -1,15 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { PolarArea, Doughnut } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  RadialLinearScale,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
 import './Portfolio.css';
-
-ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend);
 
 const AnimatedNumber = ({ value }) => {
   const [currentValue, setCurrentValue] = useState(0);
@@ -20,7 +10,7 @@ const AnimatedNumber = ({ value }) => {
       (entries) => {
         if (entries[0].isIntersecting) {
           let start = 0;
-          const duration = 2000;
+          const duration = 1800;
           const end = value;
           if (start === end) return;
 
@@ -50,10 +40,22 @@ const AnimatedNumber = ({ value }) => {
   return <span ref={ref}>{currentValue.toLocaleString()}</span>;
 };
 
+const STAT_CARDS = [
+  { key: 'usersEnrolled', icon: 'group', label: 'Users enrolled', prefix: '' },
+  { key: 'totalAssetCap', icon: 'account_balance', label: 'Total asset cap', prefix: '$' },
+  { key: 'humanitarianProjects', icon: 'volunteer_activism', label: 'Humanitarian projects', prefix: '' },
+];
+
+const ALLOCATION = [
+  { name: 'Bitcoin', pct: 32, color: '#f2a900' },
+  { name: 'Ethereum', pct: 24, color: '#627eea' },
+  { name: 'Stellar (XLM)', pct: 20, color: '#00e1ff' },
+  { name: 'Ripple (XRP)', pct: 14, color: '#23292f' },
+  { name: 'Cardano', pct: 10, color: '#0033ad' },
+];
+
 const Portfolio = () => {
-  const [doughnutData, setDoughnutData] = useState(null);
   const [stats, setStats] = useState(null);
-  const doughnutRef = useRef(null);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const fetchStats = useCallback(async () => {
@@ -62,134 +64,60 @@ const Portfolio = () => {
       if (!res.ok) throw new Error('Failed to fetch stats');
       const fetchedStats = await res.json();
       setStats(fetchedStats);
-
-      setDoughnutData({
-        labels: ['Users Enrolled', 'Total Asset Cap (Last Year)', 'Humanitarian Projects'],
-        datasets: [
-          {
-            label: 'QFS Stats',
-            data: [fetchedStats.usersEnrolled, fetchedStats.totalAssetCap, fetchedStats.humanitarianProjects],
-            backgroundColor: [
-              'rgba(0, 153, 255, 1)',
-              'rgba(0, 255, 255, 1)',
-              'rgba(255, 183, 0, 1)',
-            ],
-            borderColor: [
-              'rgba(54, 162, 235, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(255, 206, 86, 1)',
-            ],
-            borderWidth: 1,
-          },
-        ],
-      });
     } catch (error) {
       console.error("Could not load platform stats:", error);
-      // Fallback to static data on error
-      setDoughnutData({
-        labels: ['Users Enrolled', 'Total Asset Cap (Last Year)', 'Humanitarian Projects'],
-        datasets: [{ data: [170000, 76000000, 2000] }]
-      });
+      setStats({ usersEnrolled: 170000, totalAssetCap: 76000000, humanitarianProjects: 2000 });
     }
   }, [apiUrl]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting) {
-          fetchStats();
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (doughnutRef.current) {
-      observer.observe(doughnutRef.current);
-    }
-
-    return () => observer.disconnect();
+    fetchStats();
   }, [fetchStats]);
 
-  const polarData = {
-    labels: ['Bitcoin', 'Ethereum', 'Solana', 'Ripple', 'Cardano'],
-    datasets: [
-      {
-        label: 'Asset Distribution',
-        data: [11, 16, 7, 3, 14],
-        backgroundColor: [
-          'rgba(255, 0, 55, 0.5)',
-          'rgba(0, 153, 255, 0.5)',
-          'rgba(255, 183, 0, 0.5)',
-          'rgba(0, 255, 255, 0.5)',
-          'rgba(85, 0, 255, 0.5)',
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-      legend: {
-        labels: {
-          color: '#495057'
-        }
-      }
-    },
-    scales: {
-      r: {
-        ticks: {
-          color: '#495057',
-          backdropColor: 'transparent'
-        },
-        grid: {
-          color: 'rgba(0, 0, 0, 0.08)'
-        },
-        angleLines: {
-          color: 'rgba(0, 0, 0, 0.08)'
-        }
-      }
-    }
-  };
-
   return (
-    <section id="portfolio" className="portfolio-section">
+    <section id="portfolio" className="reach-section">
       <div className="container">
-        <h2 className="text-center mb-5">Our Portfolio & Reach</h2>
-        {stats && (
-          <div className="row text-center mb-5 stat-counters">
-            <div className="col-md-4">
-              <div className="stat-item">
-                <h3 className="stat-value"><AnimatedNumber value={stats.usersEnrolled} /></h3>
-                <p className="stat-label">Users Enrolled</p>
-              </div>
+        <div className="section-heading">
+          <span className="section-eyebrow">Our reach</span>
+          <h2>Trusted at scale</h2>
+          <p>Real numbers from a platform built for people who move real money.</p>
+        </div>
+
+        <div className="reach-stats">
+          {STAT_CARDS.map((card) => (
+            <div className="reach-stat-card" key={card.key}>
+              <span className="reach-stat-card__icon material-symbols-outlined">{card.icon}</span>
+              <span className="reach-stat-card__value">
+                {card.prefix}{stats ? <AnimatedNumber value={stats[card.key]} /> : '0'}
+              </span>
+              <span className="reach-stat-card__label">{card.label}</span>
             </div>
-            <div className="col-md-4">
-              <div className="stat-item">
-                <h3 className="stat-value">$<AnimatedNumber value={stats.totalAssetCap} /></h3>
-                <p className="stat-label">Total Asset Cap</p>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="stat-item">
-                <h3 className="stat-value"><AnimatedNumber value={stats.humanitarianProjects} /></h3>
-                <p className="stat-label">Humanitarian Projects</p>
-              </div>
-            </div>
+          ))}
+        </div>
+
+        <div className="reach-allocation">
+          <div className="reach-allocation__heading">
+            <h3>Where balances are held</h3>
+            <p>Aggregate distribution of assets held across all connected wallets.</p>
           </div>
-        )}
-        <div className="row g-5 align-items-center">
-          <div className="col-lg-6"><div className="chart-container"><h3 className="text-center mb-3">Asset Distribution</h3><PolarArea data={polarData} options={chartOptions} /></div></div>
-          <div className="col-lg-6" ref={doughnutRef}>
-            <div className="chart-container">
-              <h3 className="text-center mb-3">Platform Statistics</h3>
-              {doughnutData && 
-                <Doughnut data={doughnutData} options={{ responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#495057' } } } }} />}
-            </div>
+          <div className="reach-allocation__bars">
+            {ALLOCATION.map((a) => (
+              <div className="allocation-row" key={a.name}>
+                <div className="allocation-row__top">
+                  <span className="allocation-row__name">
+                    <span className="allocation-row__dot" style={{ background: a.color }} />
+                    {a.name}
+                  </span>
+                  <span className="allocation-row__pct">{a.pct}%</span>
+                </div>
+                <div className="allocation-row__track">
+                  <div
+                    className="allocation-row__fill"
+                    style={{ width: `${a.pct}%`, background: a.color }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
