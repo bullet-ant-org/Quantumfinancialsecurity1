@@ -136,15 +136,15 @@ const Profile = () => {
             <div className="tab-content">
               <h3>Edit Information</h3>
               <form onSubmit={handleProfileUpdate}>
-                <div className="input-group">
+                <div className="admin-profile-input-group">
                   <input type="text" id="username" name="username" value={formData.username} onChange={handleFormChange} placeholder=" " required />
                   <label htmlFor="username">Username</label>
                 </div>
-                <div className="input-group">
+                <div className="admin-profile-input-group">
                   <input type="email" id="email" name="email" value={formData.email} onChange={handleFormChange} placeholder=" " required />
                   <label htmlFor="email">Email</label>
                 </div>
-                <div className="input-group">
+                <div className="admin-profile-input-group">
                   <input type="text" id="fullName" name="fullName" value={formData.fullName} onChange={handleFormChange} placeholder=" " required />
                   <label htmlFor="fullName">Full Name</label>
                 </div>
@@ -157,15 +157,15 @@ const Profile = () => {
             <div className="tab-content">
               <h3>Change Password</h3>
               <form onSubmit={handlePasswordUpdate}>
-                <div className="input-group">
+                <div className="admin-profile-input-group">
                   <input type="password" id="currentPassword" name="currentPassword" value={passwordData.currentPassword} onChange={handlePasswordChange} placeholder=" " required />
                   <label htmlFor="currentPassword">Current Password</label>
                 </div>
-                <div className="input-group">
+                <div className="admin-profile-input-group">
                   <input type="password" id="newPassword" name="newPassword" value={passwordData.newPassword} onChange={handlePasswordChange} placeholder=" " required />
                   <label htmlFor="newPassword">New Password</label>
                 </div>
-                <div className="input-group">
+                <div className="admin-profile-input-group">
                   <input type="password" id="confirmPassword" name="confirmPassword" value={passwordData.confirmPassword} onChange={handlePasswordChange} placeholder=" " required />
                   <label htmlFor="confirmPassword">Confirm New Password</label>
                 </div>

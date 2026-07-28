@@ -118,12 +118,12 @@
   font-weight: 400;
 }
 
-.input-group {
+.admin-profile-input-group {
   position: relative;
   margin-bottom: 30px;
 }
 
-.input-group label {
+.admin-profile-input-group label {
   position: absolute;
   top: 12px;
   left: 15px;
@@ -132,7 +132,7 @@
   transition: all 0.2s ease;
 }
 
-.input-group input {
+.admin-profile-input-group input {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -144,15 +144,15 @@
   caret-color: #00e1ff;
 }
 
-.input-group input:focus,
-.input-group input:not(:placeholder-shown) {
+.admin-profile-input-group input:focus,
+.admin-profile-input-group input:not(:placeholder-shown) {
   outline: none;
   border-color: #00e1ff;
   box-shadow: 0 0 15px rgba(0, 225, 255, 0.2);
 }
 
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label {
+.admin-profile-input-group input:focus + label,
+.admin-profile-input-group input:not(:placeholder-shown) + label {
   top: -10px;
   left: 12px;
   font-size: 0.8rem;
