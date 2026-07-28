@@ -182,29 +182,13 @@ const UserProfile = () => {
       {/* Cover + avatar header, Facebook-style */}
       <div className="fb-cover">
         <div className="fb-cover__gradient" />
-        <button className="fb-cover__edit">
-          <span className="material-symbols-outlined">photo_camera</span>
-          Edit cover
-        </button>
         <div className="fb-header">
           <div className="fb-avatar">
             <span>{getInitials(user.fullName || user.username)}</span>
-            <button className="fb-avatar__camera" title="Change photo">
-              <span className="material-symbols-outlined">photo_camera</span>
-            </button>
           </div>
           <div className="fb-header__identity">
             <h1>{user.fullName || user.username}</h1>
             <p>@{user.username} &middot; {user.role === 'admin' ? 'Administrator' : 'Member'} since {joined}</p>
-          </div>
-          <div className="fb-header__actions">
-            <button className="fb-btn fb-btn--primary" onClick={() => setActiveTab('profile')}>
-              <span className="material-symbols-outlined">edit</span>
-              Edit profile
-            </button>
-            <button className="fb-btn fb-btn--icon" title="More options">
-              <span className="material-symbols-outlined">more_horiz</span>
-            </button>
           </div>
         </div>
       </div>

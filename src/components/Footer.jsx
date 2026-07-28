@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/qfswhite.png';
+import logo from '../assets/qfs.png';
 import './Footer.css';
 
 const Footer = () => {

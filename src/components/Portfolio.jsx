@@ -136,21 +136,21 @@ const Portfolio = () => {
     plugins: {
       legend: {
         labels: {
-          color: 'white'
+          color: '#495057'
         }
       }
     },
     scales: {
       r: {
         ticks: {
-          color: 'white',
+          color: '#495057',
           backdropColor: 'transparent'
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.2)'
+          color: 'rgba(0, 0, 0, 0.08)'
         },
         angleLines: {
-          color: 'rgba(255, 255, 255, 0.2)'
+          color: 'rgba(0, 0, 0, 0.08)'
         }
       }
     }
@@ -188,7 +188,7 @@ const Portfolio = () => {
             <div className="chart-container">
               <h3 className="text-center mb-3">Platform Statistics</h3>
               {doughnutData && 
-                <Doughnut data={doughnutData} options={{ responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } } }} />}
+                <Doughnut data={doughnutData} options={{ responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#495057' } } } }} />}
             </div>
           </div>
         </div>
